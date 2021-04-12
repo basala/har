@@ -1,0 +1,27 @@
+{
+  "editor.wordWrap": "on",
+  "editor.formatOnSave": true,
+  "files.trimTrailingWhitespace": true,
+  // eslint  配置
+  "eslint.validate": ["javascript", "javascriptreact", "typescriptreact", "typescript"],
+  "editor.codeActionsOnSave": {
+    // 保存时将代码按eslint格式进行修复
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true,
+    "source.organizeImports": true
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[less]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

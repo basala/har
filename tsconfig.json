@@ -1,0 +1,11 @@
+{
+    "include": ["app"],
+    "compilerOptions": {
+        "declaration": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "noFallthroughCasesInSwitch": true,
+        "skipLibCheck": true,
+        "baseUrl": "."
+    }
+}
