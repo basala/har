@@ -1,0 +1,23 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AccountEnvironment {
+  username: String!
+  password: String!
+}
+
+type TestEntity {
+  u: String!
+}
+
+type ProjectEnvironment {
+  host: String!
+  authPath: String!
+  authBody: String!
+  tokenPath: String!
+}
+
+type Query {
+  project(id: String!): TestEntity!
+}

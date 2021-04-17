@@ -10,7 +10,6 @@ import { RecordType } from './scalar';
 })
 export class RecordEntity {
     @ObjectIdColumn()
-    @Index()
     @Expose()
     _id: string;
 
@@ -26,11 +25,13 @@ export class RecordEntity {
 
     @Field(() => Int)
     @Column()
+    @Index()
     @Expose()
     createAt: number;
 
     @Field(() => Int)
     @Column()
+    @Index()
     @Expose()
     updateAt: number;
 

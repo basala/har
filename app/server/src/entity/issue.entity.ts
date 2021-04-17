@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Expose, plainToClass } from 'class-transformer';
+import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
 import GraphQLJSON from 'graphql-type-json';
-import { Column, Entity, Index, ObjectIdColumn } from 'typeorm';
+import { Column, Entity, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
 import { RequestType } from './scalar';
 
@@ -11,9 +11,13 @@ import { RequestType } from './scalar';
 })
 export class IssueEntity {
     @ObjectIdColumn()
-    @Index()
     @Expose()
     _id: string;
+
+    @Field()
+    @Column()
+    @Expose()
+    name: string;
 
     @Field()
     @Column()
@@ -25,10 +29,10 @@ export class IssueEntity {
     @Expose()
     method: RequestType;
 
-    @Field(() => GraphQLJSON)
     @Column()
-    @Expose()
-    data: JSON;
+    @Type(() => Buffer)
+    @Exclude()
+    data: Buffer;
 
     @Field()
     @Expose()
@@ -48,4 +52,12 @@ export class IssueEntity {
             this._id = this._id || v4();
         }
     }
+}
+
+@ObjectType()
+export class FormatIssueEntity extends IssueEntity {
+    @Field(() => GraphQLJSON)
+    @Type(() => Buffer)
+    @Expose()
+    data: Buffer;
 }

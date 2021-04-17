@@ -1,6 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Expose, plainToClass } from 'class-transformer';
-import GraphQLJSON from 'graphql-type-json';
+import { Expose, plainToClass, Type } from 'class-transformer';
 import { Column, Entity, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -14,9 +13,13 @@ class ProjectEnvironment {
     @Expose()
     authPath: string;
 
-    @Field(() => GraphQLJSON)
+    @Field()
     @Expose()
-    authBody: JSON;
+    authBody: string;
+
+    @Field()
+    @Expose()
+    tokenPath: string;
 }
 
 @ObjectType()
@@ -40,6 +43,7 @@ export class ProjectEntity {
 
     @Field()
     @Column()
+    @Type(() => ProjectEnvironment)
     @Expose()
     environment: ProjectEnvironment;
 
@@ -53,8 +57,8 @@ export class ProjectEntity {
     @Expose()
     updateAt: number;
 
-    @Expose()
     @Field()
+    @Expose()
     get id(): string {
         return this._id;
     }
