@@ -69,18 +69,3 @@ export class AccountEntity {
         }
     }
 }
-
-@ObjectType()
-@Entity({
-    name: 'test',
-})
-export class TestEntity {
-    @ObjectIdColumn()
-    @Expose()
-    _id: string;
-
-    @Field()
-    @Expose()
-    @Column()
-    u: string;
-}

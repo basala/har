@@ -7,10 +7,6 @@ type AccountEnvironment {
   password: String!
 }
 
-type TestEntity {
-  u: String!
-}
-
 type ProjectEnvironment {
   host: String!
   authPath: String!
@@ -18,6 +14,15 @@ type ProjectEnvironment {
   tokenPath: String!
 }
 
+type ProjectEntity {
+  name: String!
+  userId: String!
+  environment: ProjectEnvironment!
+  createAt: Int!
+  updateAt: Int!
+  id: String!
+}
+
 type Query {
-  project(id: String!): TestEntity!
+  project(id: String!): ProjectEntity!
 }
