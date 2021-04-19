@@ -4,7 +4,7 @@ import { Box, Center, Spinner, Stack, Text } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { Redirect } from 'react-router-dom';
 import Logo from '../../components/Logo/Logo';
-import { ColorModeSwitcher } from '../../components/Theme/ColorModeSwitcher';
+import { ColorModeSwitcher } from '../../components/theme/ColorModeSwitcher';
 import { GLOBAL_CST } from '../../config/global';
 
 const VERIFY_TOKEN = gql`

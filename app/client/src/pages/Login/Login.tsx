@@ -25,7 +25,7 @@ import {
 } from 'react-icons/ai';
 import { IoLogoOctocat } from 'react-icons/io';
 import { useHistory } from 'react-router';
-import { ColorModeSwitcher } from '../../components/Theme/ColorModeSwitcher';
+import { ColorModeSwitcher } from '../../components/theme/ColorModeSwitcher';
 import { GLOBAL_CST } from '../../config/global';
 
 const CREATE_USER = gql`
