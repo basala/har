@@ -23,7 +23,7 @@ const UserMenu: FC<ChakraProps> = props => {
     const username = localStorage.getItem(GLOBAL_CST.LOCAL_STORAGE.USER_NAME);
 
     return (
-        <Menu>
+        <Menu autoSelect={false}>
             <MenuButton w="100%">
                 <HStack spacing={4} justify="space-between">
                     <HStack spacing={4}>

@@ -63,7 +63,7 @@ const ProjectItem: FC<ProjectItemProps> = props => {
                     </Flex>
                 </Link>
             </Box>
-            <Menu placement="right-start">
+            <Menu placement="right-start" autoSelect={false}>
                 <MenuButton
                     h="4rem"
                     as={IconButton}
@@ -93,7 +93,7 @@ const ProjectItem: FC<ProjectItemProps> = props => {
                         loading={false}
                         value={props}
                     />
-                    <MenuItem icon={<DeleteIcon />} onClick={onOpen}>
+                    <MenuItem icon={<DeleteIcon />} onClick={() => {}}>
                         删除
                     </MenuItem>
                 </MenuList>
