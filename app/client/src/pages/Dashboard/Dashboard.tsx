@@ -1,11 +1,11 @@
 import { useQuery } from '@apollo/client';
 import { gql } from '@apollo/client/core';
-import { Box, Center, chakra, Spinner, Stack, Text } from '@chakra-ui/react';
+import { Box, Center, Spinner, Stack, Text } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { Redirect } from 'react-router-dom';
-import { ColorModeSwitcher } from '../../components/theme/ColorModeSwitcher';
+import Logo from '../../components/Logo/Logo';
+import { ColorModeSwitcher } from '../../components/Theme/ColorModeSwitcher';
 import { GLOBAL_CST } from '../../config/global';
-import logo from './cat.svg';
 
 const VERIFY_TOKEN = gql`
     query auth($token: String!) {
@@ -42,8 +42,7 @@ const Dashboard: FC = () => {
         return (
             <Center w="100vw" h="100vh">
                 <Stack position="absolute">
-                    <chakra.img
-                        src={logo}
+                    <Logo
                         position="absolute"
                         w="8rem"
                         h="8rem"
@@ -67,8 +66,10 @@ const Dashboard: FC = () => {
 
     if (data?.verifyToken?.valid) {
         return (
-            <Box fontSize="xl" minH="100vh" p={3}>
-                <ColorModeSwitcher />
+            <Box w="100vw" h="100vh">
+                <Box fontSize="xl" minH="100vh" p={3}>
+                    <ColorModeSwitcher />
+                </Box>
             </Box>
         );
     } else {

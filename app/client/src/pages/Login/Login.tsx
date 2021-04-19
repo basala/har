@@ -13,6 +13,7 @@ import {
     InputRightElement,
     Link,
     Stack,
+    useColorModeValue,
     useToast,
 } from '@chakra-ui/react';
 import React, { FC } from 'react';
@@ -24,7 +25,7 @@ import {
 } from 'react-icons/ai';
 import { IoLogoOctocat } from 'react-icons/io';
 import { useHistory } from 'react-router';
-import { ColorModeSwitcher } from '../../components/theme/ColorModeSwitcher';
+import { ColorModeSwitcher } from '../../components/Theme/ColorModeSwitcher';
 import { GLOBAL_CST } from '../../config/global';
 
 const CREATE_USER = gql`
@@ -193,7 +194,10 @@ const Login: FC = () => {
                 <Center>
                     <Icon as={IoLogoOctocat} fontSize={60} />
                 </Center>
-                <Heading textAlign="center">
+                <Heading
+                    textAlign="center"
+                    color={useColorModeValue('blackAlpha.600', 'light')}
+                >
                     {registerMode ? 'Create an account' : 'Sign In to FineHar'}
                 </Heading>
 
