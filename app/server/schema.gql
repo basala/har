@@ -23,6 +23,43 @@ type ProjectEntity {
   id: String!
 }
 
+type UserEntity {
+  username: String!
+  salt: String!
+  password: String!
+  name: String!
+  email: String
+  createAt: Int!
+  updatedAt: Int!
+}
+
+type LoginResponse {
+  token: String!
+  userId: String!
+  username: String!
+}
+
+type VerifyTokenResponse {
+  valid: Boolean!
+}
+
 type Query {
   project(id: String!): ProjectEntity!
+  user(id: String!): UserEntity!
+  verifyToken(token: String!): VerifyTokenResponse!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): UserEntity!
+  login(input: LoginUserInput!): LoginResponse!
+}
+
+input CreateUserInput {
+  username: String!
+  password: String!
+}
+
+input LoginUserInput {
+  username: String!
+  password: String!
 }

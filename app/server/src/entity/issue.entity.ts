@@ -50,6 +50,7 @@ export class IssueEntity {
             );
 
             this._id = this._id || v4();
+            this.data = issue.data;
         }
     }
 }

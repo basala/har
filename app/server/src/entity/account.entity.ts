@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
+import { Expose, plainToClass, Type } from 'class-transformer';
 import { Column, Entity, Index, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -12,7 +12,7 @@ class AccountEnvironment {
 
     @Field()
     @Column()
-    @Exclude()
+    @Expose()
     password: string;
 }
 

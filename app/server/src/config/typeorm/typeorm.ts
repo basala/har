@@ -22,7 +22,7 @@ export class TypeormService implements TypeOrmOptionsFactory {
         };
 
         createConnection(options)
-            .then(data => {
+            .then(() => {
                 Logger.log(`Database connected`, 'TypeORM', false);
             })
             .catch(() => {

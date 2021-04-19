@@ -14,7 +14,8 @@
     "paths": {
       "@environment": ["src/environment"],
       "@entity": ["src/entity"],
-      "@utils": ["src/utils"]
+      "@utils": ["src/utils"],
+      "@auth": ["src/auth"]
     }
   }
 }
