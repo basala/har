@@ -1,11 +1,13 @@
 import { useQuery } from '@apollo/client';
 import { gql } from '@apollo/client/core';
-import { Box, Center, Spinner, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { Redirect } from 'react-router-dom';
-import Logo from '../../components/Logo/Logo';
+import CatLoading from '../../components/Loading/CatLoading';
 import { ColorModeSwitcher } from '../../components/theme/ColorModeSwitcher';
 import { GLOBAL_CST } from '../../config/global';
+import ActiveViewContainer from './ActiveView/ActiveViewContainer';
+import SideNav from './SideNav/SideNav';
 
 const VERIFY_TOKEN = gql`
     query auth($token: String!) {
@@ -40,37 +42,25 @@ const Dashboard: FC = () => {
 
     if (loading) {
         return (
-            <Center w="100vw" h="100vh">
-                <Stack position="absolute">
-                    <Logo
-                        position="absolute"
-                        w="8rem"
-                        h="8rem"
-                        top="1.5rem"
-                        left="1rem"
-                    />
-                    ;
-                    <Spinner
-                        thickness="4px"
-                        speed="0.65s"
-                        emptyColor="gray.200"
-                        color="pink.200"
-                        w="10rem"
-                        h="10rem"
-                    />
-                    <Text textAlign="center">Waiting...</Text>
-                </Stack>
-            </Center>
+            <Box w="100vw" h="100vh">
+                <CatLoading size="xl" />
+            </Box>
         );
     }
 
     if (data?.verifyToken?.valid) {
         return (
-            <Box w="100vw" h="100vh">
-                <Box fontSize="xl" minH="100vh" p={3}>
+            <Flex w="100vw" h="100vh">
+                <Box w="18rem" h="100%">
+                    <SideNav />
+                </Box>
+                <Box flex="1" h="100%">
+                    <ActiveViewContainer />
+                </Box>
+                <Box position="fixed" right="0" bottom="0" p={4}>
                     <ColorModeSwitcher />
                 </Box>
-            </Box>
+            </Flex>
         );
     } else {
         return <Redirect to="/login" />;

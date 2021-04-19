@@ -23,8 +23,8 @@ import {
     AiOutlineLock,
     AiOutlineUser,
 } from 'react-icons/ai';
-import { IoLogoOctocat } from 'react-icons/io';
 import { useHistory } from 'react-router';
+import Logo from '../../components/Logo/Logo';
 import { ColorModeSwitcher } from '../../components/theme/ColorModeSwitcher';
 import { GLOBAL_CST } from '../../config/global';
 
@@ -42,6 +42,8 @@ const LOGIN = gql`
     mutation login($input: LoginUserInput!) {
         login(input: $input) {
             token
+            userId
+            username
         }
     }
 `;
@@ -67,6 +69,8 @@ const Login: FC = () => {
         {
             login: {
                 token: string;
+                userId: string;
+                username: string;
             };
         },
         {
@@ -161,6 +165,14 @@ const Login: FC = () => {
 
         if (response.data) {
             localStorage.setItem(
+                GLOBAL_CST.LOCAL_STORAGE.USER_ID,
+                response.data.login.userId
+            );
+            localStorage.setItem(
+                GLOBAL_CST.LOCAL_STORAGE.USER_NAME,
+                response.data.login.username
+            );
+            localStorage.setItem(
                 GLOBAL_CST.LOCAL_STORAGE.AUTH_TOKEN,
                 response.data.login.token
             );
@@ -192,7 +204,7 @@ const Login: FC = () => {
                     <ColorModeSwitcher />
                 </Box>
                 <Center>
-                    <Icon as={IoLogoOctocat} fontSize={60} />
+                    <Logo w="10rem" h="10rem" />
                 </Center>
                 <Heading
                     textAlign="center"

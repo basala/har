@@ -14,7 +14,7 @@ export const App = () => (
                     <Route path={'/login'}>
                         <Login />
                     </Route>
-                    <Route key="2" path={'/'}>
+                    <Route path={'/'}>
                         <Dashboard />
                     </Route>
                 </Switch>

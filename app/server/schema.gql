@@ -31,6 +31,7 @@ type UserEntity {
   email: String
   createAt: Int!
   updatedAt: Int!
+  id: String!
 }
 
 type LoginResponse {

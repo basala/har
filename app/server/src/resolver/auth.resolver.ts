@@ -14,7 +14,7 @@ export class AuthResolver {
     @UseGuards(GQLAuthGuard)
     @Query(() => VerifyTokenResponse)
     async verifyToken(
-        @Args('token') _token: string
+        @Args('token') token: string
     ): Promise<VerifyTokenResponse> {
         return {
             valid: true,
@@ -40,6 +40,8 @@ export class AuthResolver {
 
             return {
                 token,
+                userId: data.id,
+                username: data.username,
             };
         }
 

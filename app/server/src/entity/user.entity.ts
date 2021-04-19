@@ -48,6 +48,12 @@ export class UserEntity {
     @Expose()
     updatedAt: number;
 
+    @Field()
+    @Expose()
+    get id(): string {
+        return this._id;
+    }
+
     constructor(user: Partial<UserEntity>) {
         if (user) {
             Object.assign(
