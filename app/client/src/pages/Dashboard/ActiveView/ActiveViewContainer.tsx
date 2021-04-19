@@ -4,7 +4,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import EmptyPane from '../../../components/Exception/EmptyPane';
 import Wrapper from '../Wrapper/Wrapper';
 import IssueView from './Issue/IssueView';
-import ProjectView from './Project/ProjectView';
+import ProjectContainer from './Project/ProjectContainer';
 
 const ActiveViewContainer: FC = () => {
     return (
@@ -21,7 +21,7 @@ const ActiveViewContainer: FC = () => {
                         <IssueView />
                     </Route>
                     <Route path={'/project'}>
-                        <ProjectView />
+                        <ProjectContainer />
                     </Route>
                     <Route path={'/'}>
                         <Redirect to="/project" />

@@ -17,12 +17,8 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import {
-    AiFillEye,
-    AiFillEyeInvisible,
-    AiOutlineLock,
-    AiOutlineUser,
-} from 'react-icons/ai';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { FcLock, FcManager } from 'react-icons/fc';
 import { useHistory } from 'react-router';
 import Logo from '../../components/Logo/Logo';
 import { ColorModeSwitcher } from '../../components/theme/ColorModeSwitcher';
@@ -218,7 +214,7 @@ const Login: FC = () => {
                         <FormLabel>UserName</FormLabel>
                         <InputGroup>
                             <InputLeftElement
-                                children={<Icon as={AiOutlineUser} />}
+                                children={<Icon as={FcManager} />}
                             />
                             <Input
                                 placeholder="Please input your username"
@@ -231,9 +227,7 @@ const Login: FC = () => {
                     <FormControl isRequired>
                         <FormLabel>Password</FormLabel>
                         <InputGroup>
-                            <InputLeftElement
-                                children={<Icon as={AiOutlineLock} />}
-                            />
+                            <InputLeftElement children={<Icon as={FcLock} />} />
                             <Input
                                 type={show ? 'text' : 'password'}
                                 placeholder="Please input your password"

@@ -1,4 +1,4 @@
-import { Divider, Flex, Grid, Text } from '@chakra-ui/layout';
+import { Divider, Flex, Grid, Text } from '@chakra-ui/react';
 import { FC } from 'react';
 
 const IssueView: FC = () => {

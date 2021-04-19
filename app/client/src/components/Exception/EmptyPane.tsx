@@ -1,5 +1,4 @@
-import Icon from '@chakra-ui/icon';
-import { Center, Heading, Stack } from '@chakra-ui/layout';
+import { Center, Icon, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import { FC } from 'react';
 import { IconType } from 'react-icons';
 import { FcInTransit } from 'react-icons/fc';
@@ -16,9 +15,16 @@ const EmptyPane: FC<EmptyPaneProps> = props => {
         <Center h="100%" w="100%">
             <Stack>
                 <Center>
-                    <Icon as={icon} boxSize={60} />
+                    <Icon as={icon} boxSize={40} />
                 </Center>
-                <Heading textAlign="center">{text}</Heading>
+                <Text
+                    textAlign="center"
+                    fontSize={16}
+                    fontWeight="bold"
+                    color={useColorModeValue('blackAlpha.600', 'light')}
+                >
+                    {text}
+                </Text>
             </Stack>
         </Center>
     );
