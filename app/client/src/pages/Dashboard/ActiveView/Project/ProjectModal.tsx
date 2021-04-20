@@ -23,6 +23,7 @@ import { FcFilingCabinet, FcFolder, FcServices } from 'react-icons/fc';
 interface ProjectModalProps {
     header: string;
     loading: boolean;
+    loadingText?: string;
     onConfirm: (input: ProjectParams) => void;
     value?: Partial<ProjectParams>;
     isOpen: boolean;
@@ -54,20 +55,23 @@ const defaultValue: ProjectParams = {
 };
 
 const ProjectModal: FC<ProjectModalProps> = props => {
-    const { header, isOpen, onClose, onConfirm, loading, value } = props;
-    const [name, setName] = React.useState(value?.name || defaultValue.name);
-    const [host, setHost] = React.useState(
-        value?.environment?.host || defaultValue.environment.host
-    );
-    const [authUrl, setAuthUrl] = React.useState(
-        value?.environment?.authUrl || defaultValue.environment.authUrl
-    );
-    const [authBody, setAuthBody] = React.useState(
-        value?.environment?.authBody || defaultValue.environment.authBody
-    );
-    const [tokenPath, setTokenPath] = React.useState(
-        value?.environment?.tokenPath || defaultValue.environment.tokenPath
-    );
+    const {
+        header,
+        isOpen,
+        onClose,
+        onConfirm,
+        loading,
+        loadingText = '',
+        value: {
+            name: projectName = defaultValue.name,
+            environment = defaultValue.environment,
+        } = defaultValue,
+    } = props;
+    const [name, setName] = React.useState(projectName);
+    const [host, setHost] = React.useState(environment.host);
+    const [authUrl, setAuthUrl] = React.useState(environment.authUrl);
+    const [authBody, setAuthBody] = React.useState(environment.authBody);
+    const [tokenPath, setTokenPath] = React.useState(environment.tokenPath);
 
     const toast = useToast();
     const checkValid = () => {
@@ -115,7 +119,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                                 />
                                 <Input
                                     placeholder="eg: 测试工程"
-                                    defaultValue={name}
+                                    defaultValue={projectName}
                                     onChange={event => {
                                         setName(event.target.value);
                                     }}
@@ -130,7 +134,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                                 />
                                 <Input
                                     placeholder="eg: https://test.jiushuyun.com"
-                                    defaultValue={host}
+                                    defaultValue={environment.host}
                                     onChange={event => {
                                         setHost(event.target.value);
                                     }}
@@ -148,9 +152,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                                     onChange={event => {
                                         setAuthUrl(event.target.value);
                                     }}
-                                    defaultValue={
-                                        defaultValue.environment.authUrl
-                                    }
+                                    defaultValue={environment.authUrl}
                                 />
                             </InputGroup>
                         </FormControl>
@@ -165,7 +167,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
     "encrypted": false,
 }
                                 `}
-                                defaultValue={defaultValue.environment.authBody}
+                                defaultValue={environment.authBody}
                                 onChange={event => {
                                     setAuthBody(event.target.value);
                                 }}
@@ -180,9 +182,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                                 />
                                 <Input
                                     placeholder={`eg: (json格式) ["data", "token"]`}
-                                    defaultValue={
-                                        defaultValue.environment.tokenPath
-                                    }
+                                    defaultValue={environment.tokenPath}
                                     onChange={event => {
                                         setTokenPath(event.target.value);
                                     }}
@@ -197,6 +197,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                     </Button>
                     <Button
                         isLoading={loading}
+                        loadingText={loadingText}
                         colorScheme="blue"
                         onClick={() => {
                             checkValid() &&

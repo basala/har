@@ -28,8 +28,6 @@ const CREATE_USER = gql`
     mutation createUser($input: CreateUserInput!) {
         createUser(input: $input) {
             username
-            salt
-            password
         }
     }
 `;

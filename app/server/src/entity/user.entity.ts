@@ -28,11 +28,6 @@ export class UserEntity {
     @Exclude()
     password: string;
 
-    @Field()
-    @Column()
-    @Expose()
-    name: string;
-
     @Field({ nullable: true })
     @Column()
     @Expose()

@@ -1,5 +1,10 @@
 import { CurrentUser, GQLAuthGuard } from '@auth';
-import { CreateProjectInput, ProjectEntity, UserEntity } from '@entity';
+import {
+    CreateProjectInput,
+    ProjectEntity,
+    UpdateProjectInput,
+    UserEntity,
+} from '@entity';
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { makeId } from '@utils';
@@ -31,7 +36,7 @@ export class ProjectResolver {
             const projects = await getMongoRepository(ProjectEntity).find({
                 select: ['id', 'name', 'environment'],
                 where: {
-                    userId: user._id,
+                    userId: user.id,
                 },
             });
 
@@ -48,7 +53,7 @@ export class ProjectResolver {
     ): Promise<ProjectEntity> {
         const existedProject = await getMongoRepository(ProjectEntity).findOne({
             name: input.name,
-            userId: user._id,
+            userId: user.id,
         });
 
         if (existedProject) {
@@ -65,6 +70,69 @@ export class ProjectResolver {
         );
 
         return createProject;
+    }
+
+    @Mutation(() => ProjectEntity)
+    async updateProject(
+        @Args('input') input: UpdateProjectInput,
+        @CurrentUser() user: UserEntity
+    ): Promise<ProjectEntity> {
+        try {
+            const existedProject = await getMongoRepository(
+                ProjectEntity
+            ).findOne({
+                _id: input.id,
+                userId: user.id,
+            });
+
+            if (!existedProject) {
+                throw new ForbiddenError('Project does not exists.');
+            }
+
+            const value = {
+                ...input,
+                updateAt: Date.now(),
+            };
+            await getMongoRepository(ProjectEntity).update(
+                {
+                    _id: input.id,
+                },
+                value
+            );
+
+            return {
+                ...existedProject,
+                ...value,
+            };
+        } catch (error) {
+            throw new ApolloError(error);
+        }
+    }
+
+    @Mutation(() => ProjectEntity)
+    async deleteProject(
+        @Args('id') id: string,
+        @CurrentUser() user: UserEntity
+    ): Promise<ProjectEntity> {
+        try {
+            const existedProject = await getMongoRepository(
+                ProjectEntity
+            ).findOne({
+                _id: id,
+                userId: user.id,
+            });
+
+            if (!existedProject) {
+                throw new ForbiddenError('Project does not exists.');
+            }
+            await getMongoRepository(ProjectEntity).delete({
+                _id: id,
+            });
+
+            return existedProject;
+        } catch (error) {
+            throw new ApolloError(error);
+        }
     }
 
     private async getPrivateId(name: string, l = 6): Promise<string> {

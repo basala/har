@@ -91,3 +91,10 @@ export class CreateProjectInput {
     @Expose()
     environment: ProjectEnvironment;
 }
+
+@InputType()
+export class UpdateProjectInput extends CreateProjectInput {
+    @Field()
+    @Expose()
+    id: string;
+}

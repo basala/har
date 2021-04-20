@@ -1,5 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import React, { FC } from 'react';
+import { FcExpired } from 'react-icons/fc';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import EmptyPane from '../../../components/Exception/EmptyPane';
 import Wrapper from '../Wrapper/Wrapper';
@@ -12,10 +13,14 @@ const ActiveViewContainer: FC = () => {
             <Wrapper h="100%">
                 <Switch>
                     <Route path={'/settings'}>
+                        <EmptyPane
+                            icon={FcExpired}
+                            text="貌似什么都没有噢ヽ(✿ﾟ▽ﾟ)ノ"
+                        />
                         <EmptyPane />
                     </Route>
                     <Route path={'/development'}>
-                        <EmptyPane text="还没想好放些啥..." />
+                        <EmptyPane />
                     </Route>
                     <Route path={'/project/:id'}>
                         <IssueView />

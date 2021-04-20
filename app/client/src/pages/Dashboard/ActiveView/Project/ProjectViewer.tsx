@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
-import { Grid } from '@chakra-ui/react';
+import { SimpleGrid } from '@chakra-ui/react';
 import _ from 'lodash';
 import React, { FC } from 'react';
 import { FcExpired, FcHighPriority } from 'react-icons/fc';
@@ -48,11 +48,11 @@ const ProjectViewer: FC = () => {
     }
 
     return (
-        <Grid h="100%" py={3} templateColumns="repeat(5, 1fr)" gap={6}>
+        <SimpleGrid py={3} columns={5} spacing={6}>
             {_.map(data?.findAllProjects, (project, index) => {
                 return <ProjectItem key={index} {...project} />;
             })}
-        </Grid>
+        </SimpleGrid>
     );
 };
 

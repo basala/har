@@ -34,7 +34,25 @@ const ProjectContainer: FC = () => {
         {
             input: ProjectParams;
         }
-    >(ADD_PROJECT);
+    >(ADD_PROJECT, {
+        update(cache, data) {
+            cache.modify({
+                fields: {
+                    findAllProjects(existingProjects = []) {
+                        const newProjectRef = cache.writeFragment({
+                            data: data.data?.createProject,
+                            fragment: gql`
+                                fragment NewProject on ProjectEntity {
+                                    id
+                                }
+                            `,
+                        });
+                        return [...existingProjects, newProjectRef];
+                    },
+                },
+            });
+        },
+    });
     const toast = useToast();
 
     const onSave = async (input: ProjectParams) => {
@@ -82,7 +100,7 @@ const ProjectContainer: FC = () => {
                 />
             </HStack>
             <Divider />
-            <Box flex="1">
+            <Box flex="1" overflow="auto">
                 <ProjectViewer />
             </Box>
         </Flex>
