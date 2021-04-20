@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
 import GraphQLJSON from 'graphql-type-json';
-import { Column, Entity, ObjectIdColumn } from 'typeorm';
+import { Column, Entity, Index, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
 import { RequestType } from './scalar';
 
@@ -13,6 +13,11 @@ export class IssueEntity {
     @ObjectIdColumn()
     @Expose()
     _id: string;
+
+    @Field()
+    @Column()
+    @Expose()
+    parentId: string;
 
     @Field()
     @Column()
@@ -34,6 +39,18 @@ export class IssueEntity {
     @Exclude()
     data: Buffer;
 
+    @Field(() => Int)
+    @Column()
+    @Index()
+    @Expose()
+    createAt: number;
+
+    @Field(() => Int)
+    @Column()
+    @Index()
+    @Expose()
+    updateAt: number;
+
     @Field()
     @Expose()
     get id(): string {
@@ -50,6 +67,8 @@ export class IssueEntity {
             );
 
             this._id = this._id || v4();
+            this.createAt = this.createAt || Date.now();
+            this.updateAt = this.updateAt || this.createAt;
             this.data = issue.data;
         }
     }

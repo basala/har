@@ -11,13 +11,3 @@ registerEnumType(RequestType, {
     name: 'RequestType',
     description: 'request type',
 });
-
-export enum RecordType {
-    FOLDER,
-    ISSUE,
-}
-
-registerEnumType(RecordType, {
-    name: 'RecordType',
-    description: 'record type',
-});
