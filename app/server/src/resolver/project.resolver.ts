@@ -9,6 +9,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { makeId } from '@utils';
 import { ApolloError, ForbiddenError } from 'apollo-server-express';
+import { plainToClass } from 'class-transformer';
 import { getMongoRepository } from 'typeorm';
 
 @Resolver('Project')
@@ -90,7 +91,8 @@ export class ProjectResolver {
             }
 
             const value = {
-                ...input,
+                name: input.name,
+                environment: input.environment,
                 updateAt: Date.now(),
             };
             await getMongoRepository(ProjectEntity).update(
@@ -100,10 +102,16 @@ export class ProjectResolver {
                 value
             );
 
-            return {
-                ...existedProject,
-                ...value,
-            };
+            return plainToClass(
+                ProjectEntity,
+                {
+                    ...existedProject,
+                    ...value,
+                },
+                {
+                    excludeExtraneousValues: true,
+                }
+            );
         } catch (error) {
             throw new ApolloError(error);
         }
