@@ -17,7 +17,6 @@ const ActiveViewContainer: FC = () => {
                             icon={FcExpired}
                             text="貌似什么都没有噢ヽ(✿ﾟ▽ﾟ)ノ"
                         />
-                        <EmptyPane />
                     </Route>
                     <Route path={'/development'}>
                         <EmptyPane />
