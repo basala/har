@@ -1,6 +1,13 @@
 import { gql, Reference, useMutation } from '@apollo/client';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogCloseButton,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
     Box,
     Button,
     Center,
@@ -12,13 +19,6 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
     Stack,
     Text,
     Tooltip,
@@ -67,6 +67,7 @@ const ProjectItem: FC<ProjectItemProps> = props => {
         onOpen: onDeleteTipOpen,
         onClose: onDeleteTipClose,
     } = useDisclosure();
+    const cancelRef = React.useRef(null);
     const [updateProject, { loading: updateLoading }] = useMutation<
         {
             updateProject: {
@@ -252,30 +253,34 @@ const ProjectItem: FC<ProjectItemProps> = props => {
                 loadingText="Updating..."
                 value={props}
             />
-            <Modal isOpen={isDeleteTipOpen} onClose={onDeleteTipClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>w(ﾟДﾟ)w</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        {`将会删除改工程下所有账号以及har用例信息, 且无法找回,
+            <AlertDialog
+                leastDestructiveRef={cancelRef}
+                onClose={onDeleteTipClose}
+                isOpen={isDeleteTipOpen}
+            >
+                <AlertDialogOverlay />
+                <AlertDialogContent>
+                    <AlertDialogHeader>w(ﾟДﾟ)w</AlertDialogHeader>
+                    <AlertDialogCloseButton />
+                    <AlertDialogBody>
+                        {`将会删除改工程下所有账号以及用例, 且无法找回,
                         确认删除 ${name} 吗?`}
-                    </ModalBody>
-
-                    <ModalFooter>
-                        <Button mr={3} onClick={onDeleteTipClose}>
+                    </AlertDialogBody>
+                    <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={onDeleteTipClose}>
                             取消
                         </Button>
                         <Button
                             isLoading={deleteLoading}
-                            colorScheme="blue"
+                            colorScheme="red"
+                            ml={3}
                             onClick={onDelete}
                         >
                             确认
                         </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </Stack>
     );
 };
