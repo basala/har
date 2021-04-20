@@ -14,12 +14,10 @@ import {
 import React, { FC } from 'react';
 import { AiOutlineLogout } from 'react-icons/ai';
 import { FcMenu } from 'react-icons/fc';
-import { useHistory } from 'react-router';
 import Logo from '../../../../components/Logo/Logo';
 import { GLOBAL_CST } from '../../../../config/global';
 
 const UserMenu: FC<ChakraProps> = props => {
-    const history = useHistory();
     const username = localStorage.getItem(GLOBAL_CST.LOCAL_STORAGE.USER_NAME);
 
     return (
@@ -48,7 +46,8 @@ const UserMenu: FC<ChakraProps> = props => {
                         localStorage.removeItem(
                             GLOBAL_CST.LOCAL_STORAGE.AUTH_TOKEN
                         );
-                        history.push('/login');
+                        // use reload here to avoid gql cache
+                        window.location.reload();
                     }}
                 >
                     退出
