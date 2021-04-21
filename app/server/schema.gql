@@ -7,6 +7,15 @@ type AccountEnvironment {
   password: String!
 }
 
+type AccountEntity {
+  projectId: String!
+  name: String!
+  environment: AccountEnvironment!
+  createAt: Int!
+  updateAt: Int!
+  id: String!
+}
+
 type ProjectEnvironment {
   host: String!
   authUrl: String!
@@ -48,6 +57,7 @@ type Query {
   findAllProjects: [ProjectEntity!]!
   user(id: String!): UserEntity!
   verifyToken(token: String!): VerifyTokenResponse!
+  findAllAccounts(input: String!): [AccountEntity!]!
 }
 
 type Mutation {
@@ -56,6 +66,7 @@ type Mutation {
   deleteProject(id: String!): ProjectEntity!
   createUser(input: CreateUserInput!): UserEntity!
   login(input: LoginUserInput!): LoginResponse!
+  createAccount(input: CreateAccountInput!): AccountEntity!
 }
 
 input CreateProjectInput {
@@ -82,4 +93,10 @@ input CreateUserInput {
 input LoginUserInput {
   username: String!
   password: String!
+}
+
+input CreateAccountInput {
+  projectId: String!
+  name: String!
+  environment: JSON!
 }

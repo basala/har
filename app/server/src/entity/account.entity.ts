@@ -1,17 +1,16 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Expose, plainToClass, Type } from 'class-transformer';
+import GraphQLJSON from 'graphql-type-json';
 import { Column, Entity, Index, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
 @ObjectType()
 class AccountEnvironment {
     @Field()
-    @Column()
     @Expose()
     username: string;
 
     @Field()
-    @Column()
     @Expose()
     password: string;
 }
@@ -29,6 +28,11 @@ export class AccountEntity {
     @Column()
     @Expose()
     projectId: string;
+
+    @Field()
+    @Column()
+    @Expose()
+    name: string;
 
     @Field()
     @Column()
@@ -68,4 +72,20 @@ export class AccountEntity {
             this.updateAt = this.updateAt || this.createAt;
         }
     }
+}
+
+@InputType()
+export class CreateAccountInput {
+    @Field()
+    @Expose()
+    projectId: string;
+
+    @Field()
+    @Expose()
+    name: string;
+
+    @Field(() => GraphQLJSON)
+    @Type(() => AccountEnvironment)
+    @Expose()
+    environment: AccountEnvironment;
 }

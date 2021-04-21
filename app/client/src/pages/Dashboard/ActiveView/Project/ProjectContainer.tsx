@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { FcPlus } from 'react-icons/fc';
-import ProjectModal, { ProjectParams } from './ProjectModal';
+import ProjectModal, { ProjectParams } from './modal/ProjectModal';
 import ProjectViewer from './ProjectViewer';
 
 const ADD_PROJECT = gql`
@@ -100,7 +100,7 @@ const ProjectContainer: FC = () => {
                 />
             </HStack>
             <Divider />
-            <Box flex="1" overflow="auto">
+            <Box flex="1" overflow="auto" my={4}>
                 <ProjectViewer />
             </Box>
         </Flex>

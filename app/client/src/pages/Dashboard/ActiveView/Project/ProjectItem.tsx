@@ -30,7 +30,7 @@ import _ from 'lodash';
 import React, { FC } from 'react';
 import { FcPackage, FcSettings } from 'react-icons/fc';
 import { Link as RouterLink } from 'react-router-dom';
-import ProjectModal, { ProjectParams } from './ProjectModal';
+import ProjectModal, { ProjectParams } from './modal/ProjectModal';
 
 interface ProjectItemProps extends ProjectParams {
     id: string;

@@ -5,8 +5,8 @@ import React, { FC } from 'react';
 import { FcExpired, FcHighPriority } from 'react-icons/fc';
 import EmptyPane from '../../../../components/Exception/EmptyPane';
 import CatLoading from '../../../../components/Loading/CatLoading';
+import { ProjectParams } from './modal/ProjectModal';
 import ProjectItem from './ProjectItem';
-import { ProjectParams } from './ProjectModal';
 
 const QUERY_PROJECT = gql`
     query project {
@@ -48,7 +48,7 @@ const ProjectViewer: FC = () => {
     }
 
     return (
-        <SimpleGrid py={3} columns={5} spacing={6}>
+        <SimpleGrid columns={5} spacing={6}>
             {_.map(data?.findAllProjects, (project, index) => {
                 return <ProjectItem key={index} {...project} />;
             })}

@@ -4,7 +4,7 @@ import { FcExpired } from 'react-icons/fc';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import EmptyPane from '../../../components/Exception/EmptyPane';
 import Wrapper from '../Wrapper/Wrapper';
-import IssueView from './Issue/IssueView';
+import IssueContainer from './Issue/IssueContainer';
 import ProjectContainer from './Project/ProjectContainer';
 
 const ActiveViewContainer: FC = () => {
@@ -22,7 +22,7 @@ const ActiveViewContainer: FC = () => {
                         <EmptyPane />
                     </Route>
                     <Route path={'/project/:id'}>
-                        <IssueView />
+                        <IssueContainer />
                     </Route>
                     <Route path={'/project'}>
                         <ProjectContainer />
