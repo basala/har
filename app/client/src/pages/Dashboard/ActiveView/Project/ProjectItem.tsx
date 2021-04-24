@@ -14,7 +14,8 @@ import {
     Flex,
     Icon,
     IconButton,
-    Link,
+    LinkBox,
+    LinkOverlay,
     Menu,
     MenuButton,
     MenuItem,
@@ -28,8 +29,8 @@ import {
 } from '@chakra-ui/react';
 import _ from 'lodash';
 import React, { FC } from 'react';
-import { FcPackage, FcSettings } from 'react-icons/fc';
-import { Link as RouterLink } from 'react-router-dom';
+import { FcBookmark, FcPackage, FcSettings } from 'react-icons/fc';
+import { Link } from 'react-router-dom';
 import ProjectModal, { ProjectParams } from './modal/ProjectModal';
 
 interface ProjectItemProps extends ProjectParams {
@@ -187,100 +188,110 @@ const ProjectItem: FC<ProjectItemProps> = props => {
             _hover={{ shadow: 'md' }}
             spacing={0}
         >
-            <Box h="8rem">
-                <Link
-                    as={RouterLink}
-                    to={`/project/${id}`}
-                    style={{ textDecoration: 'none' }}
-                    _focus={{
-                        border: '0',
-                    }}
-                    _active={{
-                        border: '0',
-                    }}
-                >
-                    <Flex direction="column" p="1rem" pb="2rem">
-                        <Tooltip label={name} placement="auto-start">
-                            <Text
-                                h="2rem"
-                                fontWeight="bold"
-                                color={useColorModeValue('teal.500', 'light')}
-                                whiteSpace="nowrap"
-                                overflow="hidden"
-                                textOverflow="ellipsis"
-                            >
-                                {name}
-                            </Text>
-                        </Tooltip>
+            <LinkBox h="100%">
+                <Box position="absolute" inset="0">
+                    <Tooltip label={name} placement="auto-start">
+                        <LinkOverlay
+                            as={Link}
+                            to={`/project/${id}`}
+                        ></LinkOverlay>
+                    </Tooltip>
+                    <Icon
+                        as={FcBookmark}
+                        position="absolute"
+                        right="0"
+                        top="-5px"
+                        boxSize={10}
+                    />
+                    <Flex direction="column" h="100%">
+                        <Text
+                            h="2rem"
+                            mx="1rem"
+                            mt="1rem"
+                            fontWeight="bold"
+                            color={useColorModeValue('teal.500', 'light')}
+                            whiteSpace="nowrap"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                        >
+                            {name}
+                        </Text>
                         <Center flex="1">
                             <Icon as={FcPackage} boxSize={20} />
                         </Center>
-                    </Flex>
-                </Link>
-            </Box>
-            <Menu placement="right-start" autoSelect={false}>
-                <MenuButton
-                    h="4rem"
-                    as={IconButton}
-                    icon={<FcSettings />}
-                    alignSelf="flex-end"
-                    aria-label="settings"
-                    variant="ghost"
-                    _focus={{
-                        border: '0',
-                        bg: '',
-                    }}
-                    _hover={{
-                        bg: '',
-                    }}
-                    _active={{ bg: '' }}
-                ></MenuButton>
-                <MenuList>
-                    <MenuItem icon={<EditIcon />} onClick={onOpen}>
-                        配置
-                    </MenuItem>
-                    <MenuItem icon={<DeleteIcon />} onClick={onDeleteTipOpen}>
-                        删除
-                    </MenuItem>
-                </MenuList>
-            </Menu>
-            <ProjectModal
-                isOpen={isOpen}
-                onClose={onClose}
-                onConfirm={onUpdate}
-                header={name}
-                loading={updateLoading}
-                loadingText="Updating..."
-                value={props}
-            />
-            <AlertDialog
-                leastDestructiveRef={cancelRef}
-                onClose={onDeleteTipClose}
-                isOpen={isDeleteTipOpen}
-            >
-                <AlertDialogOverlay />
-                <AlertDialogContent>
-                    <AlertDialogHeader>w(ﾟДﾟ)w</AlertDialogHeader>
-                    <AlertDialogCloseButton />
-                    <AlertDialogBody>
-                        {`将会删除改工程下所有账号以及用例, 且无法找回,
+                        <Menu placement="right-start" autoSelect={false}>
+                            <MenuButton
+                                as={IconButton}
+                                icon={<FcSettings />}
+                                alignSelf="flex-end"
+                                aria-label="settings"
+                                variant="ghost"
+                                _focus={{
+                                    border: '0',
+                                    bg: '',
+                                }}
+                                _hover={{
+                                    bg: '',
+                                }}
+                                _active={{ bg: '' }}
+                            ></MenuButton>
+                            <MenuList>
+                                <MenuItem icon={<EditIcon />} onClick={onOpen}>
+                                    配置
+                                </MenuItem>
+                                <ProjectModal
+                                    isOpen={isOpen}
+                                    onClose={onClose}
+                                    onConfirm={onUpdate}
+                                    header={name}
+                                    loading={updateLoading}
+                                    loadingText="Updating..."
+                                    value={props}
+                                />
+                                <MenuItem
+                                    icon={<DeleteIcon />}
+                                    onClick={onDeleteTipOpen}
+                                >
+                                    删除
+                                </MenuItem>
+                                <AlertDialog
+                                    leastDestructiveRef={cancelRef}
+                                    onClose={onDeleteTipClose}
+                                    isOpen={isDeleteTipOpen}
+                                >
+                                    <AlertDialogOverlay />
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            w(ﾟДﾟ)w
+                                        </AlertDialogHeader>
+                                        <AlertDialogCloseButton />
+                                        <AlertDialogBody>
+                                            {`将会删除改工程下所有账号以及用例, 且无法找回,
                         确认删除 ${name} 吗?`}
-                    </AlertDialogBody>
-                    <AlertDialogFooter>
-                        <Button ref={cancelRef} onClick={onDeleteTipClose}>
-                            取消
-                        </Button>
-                        <Button
-                            isLoading={deleteLoading}
-                            colorScheme="red"
-                            ml={3}
-                            onClick={onDelete}
-                        >
-                            确认
-                        </Button>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                                        </AlertDialogBody>
+                                        <AlertDialogFooter>
+                                            <Button
+                                                ref={cancelRef}
+                                                onClick={onDeleteTipClose}
+                                            >
+                                                取消
+                                            </Button>
+                                            <Button
+                                                isLoading={deleteLoading}
+                                                colorScheme="red"
+                                                ml={3}
+                                                onClick={onDelete}
+                                            >
+                                                确认
+                                            </Button>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </MenuList>
+                        </Menu>
+                    </Flex>
+                </Box>
+            </LinkBox>
         </Stack>
     );
 };

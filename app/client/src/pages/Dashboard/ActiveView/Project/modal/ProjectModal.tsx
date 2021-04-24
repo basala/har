@@ -18,7 +18,7 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { FcFilingCabinet, FcFolder, FcServices } from 'react-icons/fc';
+import { FcFilingCabinet, FcFolder, FcKey, FcServices } from 'react-icons/fc';
 
 interface ProjectModalProps {
     header: string;
@@ -145,7 +145,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                             <FormLabel>登录校验Path</FormLabel>
                             <InputGroup>
                                 <InputLeftElement
-                                    children={<Icon as={FcServices} />}
+                                    children={<Icon as={FcKey} />}
                                 />
                                 <Input
                                     placeholder="eg: /decision/v1/login/password"

@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { gql } from '@apollo/client/core';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import axios from 'axios';
 import React, { FC } from 'react';
 import { Redirect } from 'react-router-dom';
 import CatLoading from '../../components/Loading/CatLoading';
@@ -19,6 +20,25 @@ const VERIFY_TOKEN = gql`
 
 const Dashboard: FC = () => {
     const token = localStorage.getItem(GLOBAL_CST.LOCAL_STORAGE.AUTH_TOKEN);
+    const [hitokoto, setHitokoto] = React.useState('');
+
+    React.useEffect(() => {
+        axios
+            .get<{
+                hitokoto: string;
+                from_who: string;
+                from: string;
+            }>('https://v1.hitokoto.cn')
+            .then(res => {
+                const { hitokoto, from, from_who } = res.data;
+
+                setHitokoto(
+                    `${hitokoto}    ----${from_who ? from_who : ''}${
+                        from ? `【${from}】` : ''
+                    }`
+                );
+            });
+    }, []);
 
     if (!token) {
         return <Redirect to="/login" />;
@@ -57,6 +77,20 @@ const Dashboard: FC = () => {
                 <Box flex="1" h="100%">
                     <ActiveViewContainer />
                 </Box>
+                <Text
+                    fontStyle="italic"
+                    fontWeight="bold"
+                    position="fixed"
+                    left="18rem"
+                    bottom="1rem"
+                    color="gray.500"
+                    boxSizing="border-box"
+                    border="dashed transparent"
+                    p="0.5rem"
+                    _hover={{ color: 'teal', borderColor: 'teal' }}
+                >
+                    {hitokoto}
+                </Text>
                 <Box position="fixed" right="0" bottom="0" p={4}>
                     <ColorModeSwitcher />
                 </Box>

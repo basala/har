@@ -3,7 +3,8 @@ import {
     HStack,
     Icon,
     IconProps,
-    Link,
+    LinkBox,
+    LinkOverlay,
     Text,
 } from '@chakra-ui/react';
 import React, { FC } from 'react';
@@ -21,16 +22,8 @@ const SideNavItem: FC<SideNavItemProps> = props => {
     const { selected = false, href, icon, text } = props;
 
     return (
-        <Link
-            as={RouterLink}
-            to={href}
-            h="3rem"
-            w="100%"
-            style={{ textDecoration: 'none' }}
-            _focus={{
-                border: '0',
-            }}
-        >
+        <LinkBox w="100%" h="3rem">
+            <LinkOverlay as={RouterLink} to={href}></LinkOverlay>
             <HStack
                 spacing={2}
                 px="0.5rem"
@@ -43,7 +36,7 @@ const SideNavItem: FC<SideNavItemProps> = props => {
                 <Icon as={icon} boxSize={6} />
                 <Text fontSize="1.2rem">{text}</Text>
             </HStack>
-        </Link>
+        </LinkBox>
     );
 };
 

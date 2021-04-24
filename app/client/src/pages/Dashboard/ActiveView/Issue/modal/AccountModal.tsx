@@ -17,7 +17,7 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { FcFilingCabinet, FcFolder } from 'react-icons/fc';
+import { FcBusinessman, FcLock } from 'react-icons/fc';
 
 interface AccountModalProps {
     header: string;
@@ -74,7 +74,7 @@ const AccountModal: FC<AccountModalProps> = props => {
                             <FormLabel>账号</FormLabel>
                             <InputGroup>
                                 <InputLeftElement
-                                    children={<Icon as={FcFolder} />}
+                                    children={<Icon as={FcBusinessman} />}
                                 />
                                 <Input
                                     placeholder="测试账号"
@@ -89,7 +89,7 @@ const AccountModal: FC<AccountModalProps> = props => {
                             <FormLabel>密码</FormLabel>
                             <InputGroup>
                                 <InputLeftElement
-                                    children={<Icon as={FcFilingCabinet} />}
+                                    children={<Icon as={FcLock} />}
                                 />
                                 <Input
                                     placeholder="密码"

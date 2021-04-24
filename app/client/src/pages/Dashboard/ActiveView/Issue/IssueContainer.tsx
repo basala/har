@@ -1,6 +1,9 @@
 import { useMutation } from '@apollo/client';
 import {
     Box,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
     Button,
     Divider,
     Flex,
@@ -10,7 +13,6 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Text,
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
@@ -18,6 +20,7 @@ import gql from 'graphql-tag';
 import React, { FC } from 'react';
 import { FcFile, FcFolder, FcPlus } from 'react-icons/fc';
 import { useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
 import IssueViewer from './IssueViewr';
 import AccountModal, { AccountParams } from './modal/AccountModal';
 
@@ -110,9 +113,18 @@ const IssueContainer: FC = () => {
     return (
         <Flex direction="column" h="100%">
             <HStack h="4rem" justify="space-between">
-                <Text fontSize={16} fontWeight="bold">
-                    所有用例
-                </Text>
+                <Breadcrumb fontWeight="bold" fontSize={16}>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink as={Link} to="/project">
+                            所有项目
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbItem isCurrentPage>
+                        <BreadcrumbLink>
+                            {projectId.split('-')[0]}
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                </Breadcrumb>
                 <Box>
                     <Menu>
                         <MenuButton
