@@ -17,7 +17,6 @@ import {
     ButtonGroup,
     Center,
     Icon,
-    Text,
     Tooltip,
     useColorModeValue,
     useDisclosure,
@@ -34,6 +33,7 @@ import {
     FcOpenedFolder,
     FcStart,
 } from 'react-icons/fc';
+import IssueContainer from './issue/IssueContanier';
 import AccountModal, { AccountParams } from './modal/AccountModal';
 
 interface AccountItemProps {
@@ -200,12 +200,7 @@ const AccountItem: FC<AccountItemProps> = props => {
     };
 
     return (
-        <Accordion
-            allowToggle
-            onChange={x => {
-                console.log(x);
-            }}
-        >
+        <Accordion allowToggle>
             <AccordionItem borderWidth={1} boxShadow="md">
                 {({ isExpanded }) => {
                     if (isExpanded) {
@@ -298,9 +293,9 @@ const AccountItem: FC<AccountItemProps> = props => {
                                 </ButtonGroup>
                                 <AccordionIcon />
                             </AccordionButton>
-                            <AccordionPanel pb={4}>
+                            <AccordionPanel>
                                 {isExpanded || !isInit ? (
-                                    <Text>testLazy</Text>
+                                    <IssueContainer />
                                 ) : (
                                     <></>
                                 )}
