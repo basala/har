@@ -34,7 +34,7 @@ import {
     FcOpenedFolder,
     FcStart,
 } from 'react-icons/fc';
-import AccountModal, { AccountParams } from '../modal/AccountModal';
+import AccountModal, { AccountParams } from './modal/AccountModal';
 
 interface AccountItemProps {
     id: string;
@@ -79,6 +79,7 @@ function createActionButton(icon: IconType, label: string, onClick = () => {}) {
 }
 
 const AccountItem: FC<AccountItemProps> = props => {
+    let isInit = true;
     const { id, name, environment } = props;
     const bg = useColorModeValue(
         '#fff linear-gradient( 135deg, rgba(250, 215, 161, 0.3) 10%, rgba(233, 109, 133, 0.3) 100%);',
@@ -206,93 +207,107 @@ const AccountItem: FC<AccountItemProps> = props => {
             }}
         >
             <AccordionItem borderWidth={1} boxShadow="md">
-                {({ isExpanded }) => (
-                    <>
-                        <AccordionButton
-                            position="sticky"
-                            top="0"
-                            _hover={{
-                                bg: '',
-                            }}
-                            _focus={{
-                                border: '0',
-                            }}
-                            h="4rem"
-                            bg={bg}
-                        >
-                            <Icon
-                                as={isExpanded ? FcOpenedFolder : FcFolder}
-                                boxSize={8}
-                                mr="1rem"
-                            />
-                            <Box flex="1" textAlign="left" fontWeight="bold">
-                                {props.name}
-                            </Box>
-                            <ButtonGroup
-                                onClick={event => {
-                                    event.preventDefault();
+                {({ isExpanded }) => {
+                    if (isExpanded) {
+                        isInit = false;
+                    }
+
+                    return (
+                        <>
+                            <AccordionButton
+                                position="sticky"
+                                top="0"
+                                _hover={{
+                                    bg: '',
                                 }}
-                                mr="1rem"
+                                _focus={{
+                                    border: '0',
+                                }}
+                                h="4rem"
+                                bg={bg}
                             >
-                                {createActionButton(FcStart, '执行')}
-                                {createActionButton(
-                                    FcEditImage,
-                                    '编辑',
-                                    onOpen
-                                )}
-                                {createActionButton(
-                                    FcFullTrash,
-                                    '删除',
-                                    onDeleteTipOpen
-                                )}
-                                <AccountModal
-                                    header="更新账号设置"
-                                    isOpen={isOpen}
-                                    loading={updateLoading}
-                                    onClose={onClose}
-                                    onConfirm={onUpdate}
-                                    value={environment}
+                                <Icon
+                                    as={isExpanded ? FcOpenedFolder : FcFolder}
+                                    boxSize={8}
+                                    mr="1rem"
                                 />
-                                <AlertDialog
-                                    leastDestructiveRef={cancelRef}
-                                    onClose={onDeleteTipClose}
-                                    isOpen={isDeleteTipOpen}
+                                <Box
+                                    flex="1"
+                                    textAlign="left"
+                                    fontWeight="bold"
                                 >
-                                    <AlertDialogOverlay />
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            w(ﾟДﾟ)w
-                                        </AlertDialogHeader>
-                                        <AlertDialogCloseButton />
-                                        <AlertDialogBody>
-                                            {`将会删除该账号下所有用例, 且无法找回,确认删除【${name}】吗?`}
-                                        </AlertDialogBody>
-                                        <AlertDialogFooter>
-                                            <Button
-                                                ref={cancelRef}
-                                                onClick={onDeleteTipClose}
-                                            >
-                                                取消
-                                            </Button>
-                                            <Button
-                                                isLoading={deleteLoading}
-                                                colorScheme="red"
-                                                ml={3}
-                                                onClick={onDelete}
-                                            >
-                                                确认
-                                            </Button>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-                            </ButtonGroup>
-                            <AccordionIcon />
-                        </AccordionButton>
-                        <AccordionPanel pb={4}>
-                            {isExpanded ? <Text>testLazy</Text> : <></>}
-                        </AccordionPanel>
-                    </>
-                )}
+                                    {props.name}
+                                </Box>
+                                <ButtonGroup
+                                    onClick={event => {
+                                        event.preventDefault();
+                                    }}
+                                    mr="1rem"
+                                >
+                                    {createActionButton(FcStart, '执行')}
+                                    {createActionButton(
+                                        FcEditImage,
+                                        '编辑',
+                                        onOpen
+                                    )}
+                                    {createActionButton(
+                                        FcFullTrash,
+                                        '删除',
+                                        onDeleteTipOpen
+                                    )}
+                                    <AccountModal
+                                        header="更新账号设置"
+                                        isOpen={isOpen}
+                                        loading={updateLoading}
+                                        onClose={onClose}
+                                        onConfirm={onUpdate}
+                                        value={environment}
+                                    />
+                                    <AlertDialog
+                                        leastDestructiveRef={cancelRef}
+                                        onClose={onDeleteTipClose}
+                                        isOpen={isDeleteTipOpen}
+                                    >
+                                        <AlertDialogOverlay />
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                w(ﾟДﾟ)w
+                                            </AlertDialogHeader>
+                                            <AlertDialogCloseButton />
+                                            <AlertDialogBody>
+                                                {`将会删除该账号下所有用例, 且无法找回,确认删除【${name}】吗?`}
+                                            </AlertDialogBody>
+                                            <AlertDialogFooter>
+                                                <Button
+                                                    ref={cancelRef}
+                                                    onClick={onDeleteTipClose}
+                                                >
+                                                    取消
+                                                </Button>
+                                                <Button
+                                                    isLoading={deleteLoading}
+                                                    colorScheme="red"
+                                                    ml={3}
+                                                    onClick={onDelete}
+                                                >
+                                                    确认
+                                                </Button>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </ButtonGroup>
+                                <AccordionIcon />
+                            </AccordionButton>
+                            <AccordionPanel pb={4}>
+                                {isExpanded || !isInit ? (
+                                    <Text>testLazy</Text>
+                                ) : (
+                                    <></>
+                                )}
+                            </AccordionPanel>
+                        </>
+                    );
+                }}
             </AccordionItem>
         </Accordion>
     );

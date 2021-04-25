@@ -6,7 +6,7 @@ import { FcExpired, FcHighPriority } from 'react-icons/fc';
 import EmptyPane from '../../../../components/Exception/EmptyPane';
 import CatLoading from '../../../../components/Loading/CatLoading';
 import { useUrlPath } from '../../../../hooks/url';
-import AccountItem from './item/AccountItem';
+import AccountItem from './AccountItem';
 import { AccountParams } from './modal/AccountModal';
 
 interface AccountViewerProps {
