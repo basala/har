@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Expose, plainToClass, Type } from 'class-transformer';
 import GraphQLJSON from 'graphql-type-json';
 import { Column, Entity, ObjectIdColumn } from 'typeorm';
@@ -48,12 +48,12 @@ export class ProjectEntity {
     @Expose()
     environment: ProjectEnvironment;
 
-    @Field(() => Int)
+    @Field()
     @Column()
     @Expose()
     createAt: number;
 
-    @Field(() => Int)
+    @Field()
     @Column()
     @Expose()
     updateAt: number;

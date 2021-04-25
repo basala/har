@@ -35,7 +35,7 @@ export class ProjectResolver {
     ): Promise<ProjectEntity[]> {
         try {
             const projects = await getMongoRepository(ProjectEntity).find({
-                select: ['id', 'name', 'environment'],
+                select: ['id', 'name', 'environment', 'updateAt'],
                 where: {
                     userId: user.id,
                 },

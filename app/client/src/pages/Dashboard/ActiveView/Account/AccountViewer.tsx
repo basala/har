@@ -9,7 +9,7 @@ import { useUrlPath } from '../../../../hooks/url';
 import AccountItem from './item/AccountItem';
 import { AccountParams } from './modal/AccountModal';
 
-interface IssueViewerProps {
+interface AccountViewerProps {
     isAdding: boolean;
     setAdding: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -19,6 +19,7 @@ const QUERY_ACCOUNT = gql`
         findAllAccounts(input: $input) {
             id
             name
+            updateAt
             environment {
                 username
                 password
@@ -27,7 +28,7 @@ const QUERY_ACCOUNT = gql`
     }
 `;
 
-const IssueViewer: FC<IssueViewerProps> = props => {
+const AccountViewer: FC<AccountViewerProps> = props => {
     const [, projectId] = useUrlPath();
     const endRef = React.useRef<HTMLDivElement>(null);
     const { loading, error, data } = useQuery<
@@ -73,22 +74,25 @@ const IssueViewer: FC<IssueViewerProps> = props => {
 
     return (
         <VStack spacing={1}>
-            {_.map(data?.findAllAccounts, (account, index) => {
-                const { id, name, environment } = account;
+            {_.map(
+                _.orderBy(data?.findAllAccounts, 'updateAt', 'desc'),
+                (account, index) => {
+                    const { id, name, environment } = account;
 
-                return (
-                    <Box w="100%" px={4} py={2} key={index}>
-                        <AccountItem
-                            id={id}
-                            name={name}
-                            environment={environment}
-                        />
-                    </Box>
-                );
-            })}
+                    return (
+                        <Box w="100%" px={4} py={2} key={index}>
+                            <AccountItem
+                                id={id}
+                                name={name}
+                                environment={environment}
+                            />
+                        </Box>
+                    );
+                }
+            )}
             <div ref={endRef} />
         </VStack>
     );
 };
 
-export default IssueViewer;
+export default AccountViewer;

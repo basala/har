@@ -199,7 +199,12 @@ const AccountItem: FC<AccountItemProps> = props => {
     };
 
     return (
-        <Accordion allowToggle>
+        <Accordion
+            allowToggle
+            onChange={x => {
+                console.log(x);
+            }}
+        >
             <AccordionItem borderWidth={1} boxShadow="md">
                 {({ isExpanded }) => (
                     <>

@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
 import GraphQLJSON from 'graphql-type-json';
 import { Column, Entity, Index, ObjectIdColumn } from 'typeorm';
@@ -39,13 +39,13 @@ export class IssueEntity {
     @Exclude()
     data: Buffer;
 
-    @Field(() => Int)
+    @Field()
     @Column()
     @Index()
     @Expose()
     createAt: number;
 
-    @Field(() => Int)
+    @Field()
     @Column()
     @Index()
     @Expose()

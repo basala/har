@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { encryptPassword } from '@utils';
 import { Exclude, Expose, plainToClass } from 'class-transformer';
 import { Column, Entity, ObjectIdColumn } from 'typeorm';
@@ -33,12 +33,12 @@ export class UserEntity {
     @Expose()
     email?: string;
 
-    @Field(() => Int)
+    @Field()
     @Column()
     @Expose()
     createAt: number;
 
-    @Field(() => Int)
+    @Field()
     @Column()
     @Expose()
     updatedAt: number;

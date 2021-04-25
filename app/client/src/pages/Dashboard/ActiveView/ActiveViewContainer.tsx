@@ -7,7 +7,7 @@ import EmptyPane from '../../../components/Exception/EmptyPane';
 import { ColorModeSwitcher } from '../../../components/theme/ColorModeSwitcher';
 import { RoutePath } from '../../../hooks/url';
 import Wrapper from '../Wrapper/Wrapper';
-import IssueContainer from './Issue/IssueContainer';
+import AccountContainer from './Account/AccountContainer';
 import ProjectContainer from './Project/ProjectContainer';
 
 const ActiveViewContainer: FC = () => {
@@ -45,7 +45,7 @@ const ActiveViewContainer: FC = () => {
                         <EmptyPane />
                     </Route>
                     <Route path={`/${RoutePath.Project}/:id`}>
-                        <IssueContainer />
+                        <AccountContainer />
                     </Route>
                     <Route path={`/${RoutePath.Project}`}>
                         <ProjectContainer />

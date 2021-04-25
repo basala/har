@@ -11,8 +11,8 @@ type AccountEntity {
   projectId: String!
   name: String!
   environment: AccountEnvironment!
-  createAt: Int!
-  updateAt: Int!
+  createAt: Float!
+  updateAt: Float!
   id: String!
 }
 
@@ -27,8 +27,8 @@ type ProjectEntity {
   name: String!
   userId: String!
   environment: ProjectEnvironment!
-  createAt: Int!
-  updateAt: Int!
+  createAt: Float!
+  updateAt: Float!
   id: String!
 }
 
@@ -37,8 +37,8 @@ type UserEntity {
   salt: String!
   password: String!
   email: String
-  createAt: Int!
-  updatedAt: Int!
+  createAt: Float!
+  updatedAt: Float!
   id: String!
 }
 

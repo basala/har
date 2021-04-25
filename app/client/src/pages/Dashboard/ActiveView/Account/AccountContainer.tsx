@@ -20,7 +20,7 @@ import React, { FC } from 'react';
 import { FcFile, FcFolder, FcPlus } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { RoutePath, useUrlPath } from '../../../../hooks/url';
-import IssueViewer from './IssueViewer';
+import AccountViewer from './AccountViewer';
 import AccountModal, { AccountParams } from './modal/AccountModal';
 
 const ADD_ACCOUNT = gql`
@@ -37,7 +37,7 @@ export interface CreateAccountInput {
     environment: AccountParams;
 }
 
-const IssueContainer: FC = () => {
+const AccountContainer: FC = () => {
     const [, projectId] = useUrlPath();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [createAccount, { loading }] = useMutation<
@@ -155,10 +155,10 @@ const IssueContainer: FC = () => {
             </HStack>
             <Divider />
             <Box flex="1" overflow="auto" my={4}>
-                <IssueViewer isAdding={isAdding} setAdding={setAdding} />
+                <AccountViewer isAdding={isAdding} setAdding={setAdding} />
             </Box>
         </Flex>
     );
 };
 
-export default IssueContainer;
+export default AccountContainer;
