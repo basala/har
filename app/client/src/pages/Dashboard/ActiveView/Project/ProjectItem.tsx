@@ -219,7 +219,7 @@ const ProjectItem: FC<ProjectItemProps> = props => {
                         <Center flex="1">
                             <Icon as={FcPackage} boxSize={20} />
                         </Center>
-                        <Menu placement="right-start" autoSelect={false}>
+                        <Menu placement="right-start" autoSelect={false} isLazy>
                             <MenuButton
                                 as={IconButton}
                                 icon={<FcSettings />}
@@ -266,8 +266,7 @@ const ProjectItem: FC<ProjectItemProps> = props => {
                                         </AlertDialogHeader>
                                         <AlertDialogCloseButton />
                                         <AlertDialogBody>
-                                            {`将会删除改工程下所有账号以及用例, 且无法找回,
-                        确认删除 ${name} 吗?`}
+                                            {`将会删除改工程下所有账号以及用例, 且无法找回,确认删除【${name}】吗?`}
                                         </AlertDialogBody>
                                         <AlertDialogFooter>
                                             <Button

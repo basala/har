@@ -67,6 +67,8 @@ type Mutation {
   createUser(input: CreateUserInput!): UserEntity!
   login(input: LoginUserInput!): LoginResponse!
   createAccount(input: CreateAccountInput!): AccountEntity!
+  updateAccount(input: UpdateAccountInput!): AccountEntity!
+  deleteAccount(id: String!): AccountEntity!
 }
 
 input CreateProjectInput {
@@ -98,5 +100,10 @@ input LoginUserInput {
 input CreateAccountInput {
   projectId: String!
   name: String!
+  environment: JSON!
+}
+
+input UpdateAccountInput {
+  id: String!
   environment: JSON!
 }

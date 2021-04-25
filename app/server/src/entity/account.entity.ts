@@ -89,3 +89,15 @@ export class CreateAccountInput {
     @Expose()
     environment: AccountEnvironment;
 }
+
+@InputType()
+export class UpdateAccountInput {
+    @Field()
+    @Expose()
+    id: string;
+
+    @Field(() => GraphQLJSON)
+    @Type(() => AccountEnvironment)
+    @Expose()
+    environment: AccountEnvironment;
+}
