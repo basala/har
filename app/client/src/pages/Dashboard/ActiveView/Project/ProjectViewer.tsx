@@ -13,7 +13,6 @@ const QUERY_PROJECT = gql`
         findAllProjects {
             name
             id
-            updateAt
             environment {
                 host
                 authUrl
@@ -50,12 +49,9 @@ const ProjectViewer: FC = () => {
 
     return (
         <SimpleGrid columns={5} spacing={6}>
-            {_.map(
-                _.orderBy(data?.findAllProjects, 'updateAt', 'desc'),
-                (project, index) => {
-                    return <ProjectItem key={index} {...project} />;
-                }
-            )}
+            {_.map(data?.findAllProjects, (project, index) => {
+                return <ProjectItem key={index} {...project} />;
+            })}
         </SimpleGrid>
     );
 };

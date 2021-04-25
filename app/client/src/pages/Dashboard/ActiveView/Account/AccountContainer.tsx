@@ -22,6 +22,7 @@ import { Link } from 'react-router-dom';
 import { RoutePath, useUrlPath } from '../../../../hooks/url';
 import AccountViewer from './AccountViewer';
 import AccountModal, { AccountParams } from './modal/AccountModal';
+import IssueUploadModal from './modal/IssueUploadModal';
 
 const ADD_ACCOUNT = gql`
     mutation createAccount($input: CreateAccountInput!) {
@@ -40,6 +41,11 @@ export interface CreateAccountInput {
 const AccountContainer: FC = () => {
     const [, projectId] = useUrlPath();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        isOpen: isUploadOpen,
+        onOpen: onUploadOpen,
+        onClose: onUploadClose,
+    } = useDisclosure();
     const [createAccount, { loading }] = useMutation<
         {
             createAccount: {
@@ -139,7 +145,10 @@ const AccountContainer: FC = () => {
                             >
                                 测试账号
                             </MenuItem>
-                            <MenuItem icon={<Icon as={FcFile} boxSize={6} />}>
+                            <MenuItem
+                                icon={<Icon as={FcFile} boxSize={6} />}
+                                onClick={onUploadOpen}
+                            >
                                 Har用例
                             </MenuItem>
                         </MenuList>
@@ -151,6 +160,10 @@ const AccountContainer: FC = () => {
                     onClose={onClose}
                     onConfirm={onSave}
                     loading={loading}
+                />
+                <IssueUploadModal
+                    isOpen={isUploadOpen}
+                    onClose={onUploadClose}
                 />
             </HStack>
             <Divider />

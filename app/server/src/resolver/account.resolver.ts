@@ -15,7 +15,7 @@ export class AccountResolver {
     ): Promise<AccountEntity[]> {
         try {
             const accounts = await getMongoRepository(AccountEntity).find({
-                select: ['id', 'name', 'environment', 'updateAt'],
+                select: ['id', 'name', 'environment'],
                 where: {
                     projectId,
                 },

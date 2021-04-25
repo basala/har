@@ -19,7 +19,6 @@ const QUERY_ACCOUNT = gql`
         findAllAccounts(input: $input) {
             id
             name
-            updateAt
             environment {
                 username
                 password
@@ -74,22 +73,19 @@ const AccountViewer: FC<AccountViewerProps> = props => {
 
     return (
         <VStack spacing={1}>
-            {_.map(
-                _.orderBy(data?.findAllAccounts, 'updateAt', 'desc'),
-                (account, index) => {
-                    const { id, name, environment } = account;
+            {_.map(data?.findAllAccounts, (account, index) => {
+                const { id, name, environment } = account;
 
-                    return (
-                        <Box w="100%" px={4} py={2} key={index}>
-                            <AccountItem
-                                id={id}
-                                name={name}
-                                environment={environment}
-                            />
-                        </Box>
-                    );
-                }
-            )}
+                return (
+                    <Box w="100%" px={4} py={2} key={index}>
+                        <AccountItem
+                            id={id}
+                            name={name}
+                            environment={environment}
+                        />
+                    </Box>
+                );
+            })}
             <div ref={endRef} />
         </VStack>
     );
