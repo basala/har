@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import {
     Box,
     Breadcrumb,
@@ -16,12 +16,11 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
-import gql from 'graphql-tag';
 import React, { FC } from 'react';
 import { FcFile, FcFolder, FcPlus } from 'react-icons/fc';
-import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import IssueViewer from './IssueViewr';
+import { RoutePath, useUrlPath } from '../../../../hooks/url';
+import IssueViewer from './IssueViewer';
 import AccountModal, { AccountParams } from './modal/AccountModal';
 
 const ADD_ACCOUNT = gql`
@@ -39,8 +38,7 @@ export interface CreateAccountInput {
 }
 
 const IssueContainer: FC = () => {
-    const { pathname = '' } = useLocation();
-    const [, , projectId] = pathname.split('/');
+    const [, projectId] = useUrlPath();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [createAccount, { loading }] = useMutation<
         {
@@ -115,7 +113,7 @@ const IssueContainer: FC = () => {
             <HStack h="4rem" justify="space-between">
                 <Breadcrumb fontWeight="bold" fontSize={16}>
                     <BreadcrumbItem>
-                        <BreadcrumbLink as={Link} to="/project">
+                        <BreadcrumbLink as={Link} to={`/${RoutePath.Project}`}>
                             所有项目
                         </BreadcrumbLink>
                     </BreadcrumbItem>
@@ -157,11 +155,7 @@ const IssueContainer: FC = () => {
             </HStack>
             <Divider />
             <Box flex="1" overflow="auto" my={4}>
-                <IssueViewer
-                    projectId={projectId}
-                    isAdding={isAdding}
-                    setAdding={setAdding}
-                />
+                <IssueViewer isAdding={isAdding} setAdding={setAdding} />
             </Box>
         </Flex>
     );

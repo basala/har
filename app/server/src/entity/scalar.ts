@@ -1,10 +1,10 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum RequestType {
-    POST = 'POST',
-    GET = 'GET',
-    PUT = 'PUT',
-    DELETE = 'DELETE',
+    Post = 'POST',
+    Get = 'GET',
+    Put = 'PUT',
+    Delete = 'DELETE',
 }
 
 registerEnumType(RequestType, {

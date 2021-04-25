@@ -2,36 +2,36 @@ import { Stack, VStack } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { IconType } from 'react-icons';
 import { FcBiomass, FcHome, FcSettings } from 'react-icons/fc';
-import { matchPath, useLocation } from 'react-router-dom';
+import { matchPath } from 'react-router-dom';
+import { RoutePath, useUrlPath } from '../../../hooks/url';
 import Wrapper from '../Wrapper/Wrapper';
 import SideNavItem from './Item/SideNavItem';
 import UserMenu from './UserMenu/UserMenu';
 
 const ITEMS: {
     title: string;
-    path: string;
+    path: RoutePath;
     icon: IconType;
 }[] = [
     {
         title: '项目',
-        path: 'project',
+        path: RoutePath.Project,
         icon: FcHome,
     },
     {
         title: '设置',
-        path: 'settings',
+        path: RoutePath.Settings,
         icon: FcSettings,
     },
     {
         title: '实验室',
-        path: 'development',
+        path: RoutePath.Development,
         icon: FcBiomass,
     },
 ];
 
 const SideNav: FC = () => {
-    const { pathname = '' } = useLocation();
-    const [, menuPath] = pathname.split('/');
+    const [modulePath] = useUrlPath();
 
     return (
         <Stack py={4} px={6} h="100%" spacing={6}>
@@ -56,7 +56,7 @@ const SideNav: FC = () => {
                                 icon={item.icon}
                                 text={item.title}
                                 selected={
-                                    matchPath(menuPath, {
+                                    matchPath(modulePath, {
                                         path: item.path,
                                         exact: true,
                                     })

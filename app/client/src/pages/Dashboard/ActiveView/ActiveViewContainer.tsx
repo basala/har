@@ -1,38 +1,75 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import axios from 'axios';
 import React, { FC } from 'react';
 import { FcExpired } from 'react-icons/fc';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import EmptyPane from '../../../components/Exception/EmptyPane';
+import { ColorModeSwitcher } from '../../../components/theme/ColorModeSwitcher';
+import { RoutePath } from '../../../hooks/url';
 import Wrapper from '../Wrapper/Wrapper';
 import IssueContainer from './Issue/IssueContainer';
 import ProjectContainer from './Project/ProjectContainer';
 
 const ActiveViewContainer: FC = () => {
+    const [hitokoto, setHitokoto] = React.useState('');
+
+    React.useEffect(() => {
+        axios
+            .get<{
+                hitokoto: string;
+                from_who: string;
+                from: string;
+            }>('https://v1.hitokoto.cn')
+            .then(res => {
+                const { hitokoto, from, from_who } = res.data;
+
+                setHitokoto(
+                    `${hitokoto}    ----${from_who ? from_who : ''}${
+                        from ? `【${from}】` : ''
+                    }`
+                );
+            });
+    }, []);
+
     return (
-        <Box pr={4} pt={4} pb={20} h="100%">
-            <Wrapper h="100%">
+        <Flex pr={4} pt={4} h="100%" direction="column">
+            <Wrapper flex="1" overflow="auto">
                 <Switch>
-                    <Route path={'/settings'}>
+                    <Route path={`/${RoutePath.Settings}`}>
                         <EmptyPane
                             icon={FcExpired}
                             text="貌似什么都没有噢ヽ(✿ﾟ▽ﾟ)ノ"
                         />
                     </Route>
-                    <Route path={'/development'}>
+                    <Route path={`/${RoutePath.Development}`}>
                         <EmptyPane />
                     </Route>
-                    <Route path={'/project/:id'}>
+                    <Route path={`/${RoutePath.Project}/:id`}>
                         <IssueContainer />
                     </Route>
-                    <Route path={'/project'}>
+                    <Route path={`/${RoutePath.Project}`}>
                         <ProjectContainer />
                     </Route>
                     <Route path={'/'}>
-                        <Redirect to="/project" />
+                        <Redirect to={`/${RoutePath.Project}`} />
                     </Route>
                 </Switch>
             </Wrapper>
-        </Box>
+            <HStack h={20} justify="space-between">
+                <Text
+                    fontStyle="italic"
+                    fontWeight="bold"
+                    color="gray.500"
+                    border="dashed transparent"
+                    _hover={{ color: 'teal', borderColor: 'teal' }}
+                >
+                    {hitokoto}
+                </Text>
+                <Box p={4}>
+                    <ColorModeSwitcher />
+                </Box>
+            </HStack>
+        </Flex>
     );
 };
 

@@ -26,7 +26,7 @@ export class AuthResolver {
         @Args('input') user: LoginUserInput,
         @Context()
         context: any
-    ): Promise<any> {
+    ): Promise<LoginResponse> {
         const { req } = context;
 
         req.body = {

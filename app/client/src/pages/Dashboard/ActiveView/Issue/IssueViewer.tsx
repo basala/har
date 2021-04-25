@@ -1,14 +1,15 @@
 import { gql, useQuery } from '@apollo/client';
-import { Text, VStack } from '@chakra-ui/react';
+import { Box, VStack } from '@chakra-ui/react';
 import _ from 'lodash';
 import React, { FC } from 'react';
 import { FcExpired, FcHighPriority } from 'react-icons/fc';
 import EmptyPane from '../../../../components/Exception/EmptyPane';
 import CatLoading from '../../../../components/Loading/CatLoading';
-import { CreateAccountInput } from './IssueContainer';
+import { useUrlPath } from '../../../../hooks/url';
+import AccountItem from './item/AccountItem';
+import { AccountParams } from './modal/AccountModal';
 
 interface IssueViewerProps {
-    projectId: string;
     isAdding: boolean;
     setAdding: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -27,14 +28,22 @@ const QUERY_ACCOUNT = gql`
 `;
 
 const IssueViewer: FC<IssueViewerProps> = props => {
+    const [, projectId] = useUrlPath();
     const endRef = React.useRef<HTMLDivElement>(null);
-    const { loading, error, data } = useQuery<{
-        findAllAccounts: ({
-            id: string;
-        } & CreateAccountInput)[];
-    }>(QUERY_ACCOUNT, {
+    const { loading, error, data } = useQuery<
+        {
+            findAllAccounts: {
+                id: string;
+                name: string;
+                environment: AccountParams;
+            }[];
+        },
+        {
+            input: string;
+        }
+    >(QUERY_ACCOUNT, {
         variables: {
-            input: props.projectId,
+            input: projectId,
         },
     });
     React.useEffect(() => {
@@ -42,6 +51,7 @@ const IssueViewer: FC<IssueViewerProps> = props => {
             endRef.current?.scrollIntoView({ behavior: 'smooth' });
             props.setAdding(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
     if (loading) {
@@ -62,9 +72,19 @@ const IssueViewer: FC<IssueViewerProps> = props => {
     }
 
     return (
-        <VStack spacing={6}>
+        <VStack spacing={1}>
             {_.map(data?.findAllAccounts, (account, index) => {
-                return <Text key={index}>{account.name}</Text>;
+                const { id, name, environment } = account;
+
+                return (
+                    <Box w="100%" px={4} py={2} key={index}>
+                        <AccountItem
+                            id={id}
+                            name={name}
+                            environment={environment}
+                        />
+                    </Box>
+                );
             })}
             <div ref={endRef} />
         </VStack>
