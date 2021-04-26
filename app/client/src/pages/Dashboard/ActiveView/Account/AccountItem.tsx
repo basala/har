@@ -33,7 +33,7 @@ import {
     FcOpenedFolder,
     FcStart,
 } from 'react-icons/fc';
-import IssueContainer from './issue/IssueContanier';
+import IssueContainer from './issue/IssueContainer';
 import AccountModal, { AccountParams } from './modal/AccountModal';
 
 interface AccountItemProps {
