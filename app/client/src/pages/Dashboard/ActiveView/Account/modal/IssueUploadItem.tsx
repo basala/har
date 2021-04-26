@@ -14,21 +14,33 @@ import { HarResult } from './IssueUploadModal';
 
 interface IssueUploadItemProps
     extends Pick<HarResult, 'name' | 'url' | 'method'> {
-    onChange: (name: string) => void;
+    onChange: (selcted: boolean) => void;
+    onNameChange: (name: string) => void;
     selected: boolean;
 }
 
 const IssueUploadItem: FC<IssueUploadItemProps> = props => {
+    const [isChecked, setChecked] = React.useState(props.selected);
+    React.useEffect(() => {
+        setChecked(props.selected);
+    }, [props.selected]);
+
     return (
         <HStack p={2}>
-            <Checkbox />
+            <Checkbox
+                isChecked={isChecked}
+                onChange={event => {
+                    props.onChange(event.target.checked);
+                    setChecked(event.target.checked);
+                }}
+            />
             <Icon as={FcVideoFile} fontSize={25} />
             <Badge colorScheme="pink">{props.method}</Badge>
             <Editable
                 defaultValue={props.name}
                 whiteSpace="nowrap"
                 flex="1"
-                onSubmit={props.onChange}
+                onSubmit={props.onNameChange}
             >
                 <Tooltip label={props.url}>
                     <EditablePreview />

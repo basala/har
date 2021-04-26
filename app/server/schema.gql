@@ -16,6 +16,25 @@ type AccountEntity {
   id: String!
 }
 
+type IssueEntity {
+  parentId: String!
+  accountId: String!
+  name: String!
+  url: String!
+  method: RequestType!
+  createAt: Float!
+  updateAt: Float!
+  id: String!
+}
+
+"""request type"""
+enum RequestType {
+  POST
+  GET
+  PUT
+  DELETE
+}
+
 type ProjectEnvironment {
   host: String!
   authUrl: String!
@@ -69,6 +88,7 @@ type Mutation {
   createAccount(input: CreateAccountInput!): AccountEntity!
   updateAccount(input: UpdateAccountInput!): AccountEntity!
   deleteAccount(id: String!): AccountEntity!
+  createIssues(position: String!, hars: [CreateIssuesInput!]!): [IssueEntity!]!
 }
 
 input CreateProjectInput {
@@ -106,4 +126,11 @@ input CreateAccountInput {
 input UpdateAccountInput {
   id: String!
   environment: JSON!
+}
+
+input CreateIssuesInput {
+  name: String!
+  url: String!
+  method: RequestType!
+  content: String!
 }

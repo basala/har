@@ -47,6 +47,11 @@ const AccountModal: FC<AccountModalProps> = props => {
     const [username, setUsername] = React.useState(value.username);
     const [password, setPassword] = React.useState(value.password);
 
+    React.useEffect(() => {
+        setUsername(props.value?.username || '');
+        setPassword(props.value?.password || '');
+    }, [props.value]);
+
     const toast = useToast();
     const checkValid = () => {
         if (!username || !password) {

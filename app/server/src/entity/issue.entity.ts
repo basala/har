@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
 import GraphQLJSON from 'graphql-type-json';
 import { Column, Entity, Index, ObjectIdColumn } from 'typeorm';
@@ -22,12 +22,17 @@ export class IssueEntity {
     @Field()
     @Column()
     @Expose()
+    accountId: string;
+
+    @Field()
+    @Column()
+    @Expose()
     name: string;
 
     @Field()
     @Column()
     @Expose()
-    url: number;
+    url: string;
 
     @Field(() => RequestType)
     @Column()
@@ -37,7 +42,7 @@ export class IssueEntity {
     @Column()
     @Type(() => Buffer)
     @Exclude()
-    data: Buffer;
+    content: Buffer;
 
     @Field()
     @Column()
@@ -57,7 +62,9 @@ export class IssueEntity {
         return this._id;
     }
 
-    constructor(issue: Partial<IssueEntity>) {
+    constructor(
+        issue: Omit<Partial<IssueEntity>, 'content'> & { content: string }
+    ) {
         if (issue) {
             Object.assign(
                 this,
@@ -69,7 +76,7 @@ export class IssueEntity {
             this._id = this._id || v4();
             this.createAt = this.createAt || Date.now();
             this.updateAt = this.updateAt || this.createAt;
-            this.data = issue.data;
+            this.content = Buffer.from(issue.content, 'utf-8');
         }
     }
 }
@@ -79,5 +86,25 @@ export class FormatIssueEntity extends IssueEntity {
     @Field(() => GraphQLJSON)
     @Type(() => Buffer)
     @Expose()
-    data: Buffer;
+    content: Buffer;
+}
+
+@InputType()
+export class CreateIssuesInput {
+    @Field()
+    @Expose()
+    name: string;
+
+    @Field()
+    @Expose()
+    url: string;
+
+    @Field(() => RequestType)
+    @Type()
+    @Expose()
+    method: RequestType;
+
+    @Field()
+    @Expose()
+    content: string;
 }

@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { TypeormService } from './config';
 import { AccountResolver } from './resolver/account.resolver';
 import { AuthResolver } from './resolver/auth.resolver';
+import { IssueResolver } from './resolver/issue.resolver';
 import { ProjectResolver } from './resolver/project.resolver';
 import { UserResolver } from './resolver/user.resolver';
 
@@ -18,6 +19,12 @@ import { UserResolver } from './resolver/user.resolver';
         }),
     ],
     controllers: [AppController],
-    providers: [ProjectResolver, UserResolver, AuthResolver, AccountResolver],
+    providers: [
+        ProjectResolver,
+        UserResolver,
+        AuthResolver,
+        AccountResolver,
+        IssueResolver,
+    ],
 })
 export class AppModule {}

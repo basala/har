@@ -22,11 +22,19 @@ import { Link } from 'react-router-dom';
 import { RoutePath, useUrlPath } from '../../../../hooks/url';
 import AccountViewer from './AccountViewer';
 import AccountModal, { AccountParams } from './modal/AccountModal';
-import IssueUploadModal from './modal/IssueUploadModal';
+import IssueUploadModal, { HarResult } from './modal/IssueUploadModal';
 
 const ADD_ACCOUNT = gql`
     mutation createAccount($input: CreateAccountInput!) {
         createAccount(input: $input) {
+            id
+        }
+    }
+`;
+
+const ADD_ISSUES = gql`
+    mutation createAccounts($hars: [CreateIssuesInput!]!, $position: String!) {
+        createIssues(hars: $hars, position: $position) {
             id
         }
     }
@@ -74,6 +82,35 @@ const AccountContainer: FC = () => {
             });
         },
     });
+    const [createIssues, { loading: createIssuesLoading }] = useMutation<
+        {
+            createIssues: {
+                id: string;
+            }[];
+        },
+        {
+            hars: Omit<HarResult, 'selected'>[];
+            position: string;
+        }
+    >(ADD_ISSUES, {
+        update(cache, data) {
+            cache.modify({
+                fields: {
+                    findAllIssues(existingIssues = []) {
+                        const newIssueRefs = cache.writeFragment({
+                            data: data.data?.createIssues,
+                            fragment: gql`
+                                fragment newIssue on IssueEntity {
+                                    id
+                                }
+                            `,
+                        });
+                        return [...existingIssues, newIssueRefs];
+                    },
+                },
+            });
+        },
+    });
 
     const [isAdding, setAdding] = React.useState(false);
     const toast = useToast();
@@ -108,6 +145,44 @@ const AccountContainer: FC = () => {
         } else if (response.errors) {
             toast({
                 description: '添加账号失败',
+                status: 'error',
+                position: 'top',
+            });
+        }
+    };
+    const onUpload = async ({
+        hars,
+        position,
+    }: {
+        hars: HarResult[];
+        position: string;
+    }) => {
+        if (!projectId) {
+            toast({
+                description: '由于不可预期的原因导致projectId为空, 添加失败',
+                status: 'error',
+                position: 'top',
+            });
+            return;
+        }
+
+        const response = await createIssues({
+            variables: {
+                hars,
+                position,
+            },
+        }).catch(errors => {
+            return {
+                data: null,
+                errors,
+            };
+        });
+
+        if (response.data) {
+            onUploadClose();
+        } else if (response.errors) {
+            toast({
+                description: '添加失败',
                 status: 'error',
                 position: 'top',
             });
@@ -164,6 +239,8 @@ const AccountContainer: FC = () => {
                 <IssueUploadModal
                     isOpen={isUploadOpen}
                     onClose={onUploadClose}
+                    onConfirm={onUpload}
+                    loading={createIssuesLoading}
                 />
             </HStack>
             <Divider />
