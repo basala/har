@@ -239,55 +239,53 @@ const ProjectItem: FC<ProjectItemProps> = props => {
                                 <MenuItem icon={<EditIcon />} onClick={onOpen}>
                                     配置
                                 </MenuItem>
-                                <ProjectModal
-                                    isOpen={isOpen}
-                                    onClose={onClose}
-                                    onConfirm={onUpdate}
-                                    header={name}
-                                    loading={updateLoading}
-                                    loadingText="Updating..."
-                                    value={props}
-                                />
                                 <MenuItem
                                     icon={<DeleteIcon />}
                                     onClick={onDeleteTipOpen}
                                 >
                                     删除
                                 </MenuItem>
-                                <AlertDialog
-                                    leastDestructiveRef={cancelRef}
-                                    onClose={onDeleteTipClose}
-                                    isOpen={isDeleteTipOpen}
-                                >
-                                    <AlertDialogOverlay />
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            w(ﾟДﾟ)w
-                                        </AlertDialogHeader>
-                                        <AlertDialogCloseButton />
-                                        <AlertDialogBody>
-                                            {`将会删除改工程下所有账号以及用例, 且无法找回,确认删除【${name}】吗?`}
-                                        </AlertDialogBody>
-                                        <AlertDialogFooter>
-                                            <Button
-                                                ref={cancelRef}
-                                                onClick={onDeleteTipClose}
-                                            >
-                                                取消
-                                            </Button>
-                                            <Button
-                                                isLoading={deleteLoading}
-                                                colorScheme="red"
-                                                ml={3}
-                                                onClick={onDelete}
-                                            >
-                                                确认
-                                            </Button>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
                             </MenuList>
                         </Menu>
+                        <ProjectModal
+                            isOpen={isOpen}
+                            onClose={onClose}
+                            onConfirm={onUpdate}
+                            header={name}
+                            loading={updateLoading}
+                            loadingText="Updating..."
+                            value={props}
+                        />
+                        <AlertDialog
+                            leastDestructiveRef={cancelRef}
+                            onClose={onDeleteTipClose}
+                            isOpen={isDeleteTipOpen}
+                        >
+                            <AlertDialogOverlay />
+                            <AlertDialogContent>
+                                <AlertDialogHeader>w(ﾟДﾟ)w</AlertDialogHeader>
+                                <AlertDialogCloseButton />
+                                <AlertDialogBody>
+                                    {`将会删除改工程下所有账号以及用例, 且无法找回,确认删除【${name}】吗?`}
+                                </AlertDialogBody>
+                                <AlertDialogFooter>
+                                    <Button
+                                        ref={cancelRef}
+                                        onClick={onDeleteTipClose}
+                                    >
+                                        取消
+                                    </Button>
+                                    <Button
+                                        isLoading={deleteLoading}
+                                        colorScheme="red"
+                                        ml={3}
+                                        onClick={onDelete}
+                                    >
+                                        确认
+                                    </Button>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </Flex>
                 </Box>
             </LinkBox>

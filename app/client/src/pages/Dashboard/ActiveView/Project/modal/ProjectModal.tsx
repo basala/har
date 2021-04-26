@@ -17,7 +17,7 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { FcFilingCabinet, FcFolder, FcKey, FcServices } from 'react-icons/fc';
 
 interface ProjectModalProps {
@@ -62,16 +62,31 @@ const ProjectModal: FC<ProjectModalProps> = props => {
         onConfirm,
         loading,
         loadingText = '',
-        value: {
-            name: projectName = defaultValue.name,
-            environment = defaultValue.environment,
-        } = defaultValue,
     } = props;
-    const [name, setName] = React.useState(projectName);
-    const [host, setHost] = React.useState(environment.host);
-    const [authUrl, setAuthUrl] = React.useState(environment.authUrl);
-    const [authBody, setAuthBody] = React.useState(environment.authBody);
-    const [tokenPath, setTokenPath] = React.useState(environment.tokenPath);
+    const [name, setName] = React.useState('');
+    const [host, setHost] = React.useState('');
+    const [authUrl, setAuthUrl] = React.useState('');
+    const [authBody, setAuthBody] = React.useState('');
+    const [tokenPath, setTokenPath] = React.useState('');
+
+    useEffect(() => {
+        setName(props.value?.name || defaultValue.name);
+        setHost(
+            props.value?.environment?.host || defaultValue.environment.host
+        );
+        setAuthUrl(
+            props.value?.environment?.authUrl ||
+                defaultValue.environment.authUrl
+        );
+        setAuthBody(
+            props.value?.environment?.authBody ||
+                defaultValue.environment.authBody
+        );
+        setTokenPath(
+            props.value?.environment?.tokenPath ||
+                defaultValue.environment.tokenPath
+        );
+    }, [props.value]);
 
     const toast = useToast();
     const checkValid = () => {
@@ -119,7 +134,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                                 />
                                 <Input
                                     placeholder="eg: 测试工程"
-                                    defaultValue={projectName}
+                                    value={name}
                                     onChange={event => {
                                         setName(event.target.value);
                                     }}
@@ -134,7 +149,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                                 />
                                 <Input
                                     placeholder="eg: https://test.jiushuyun.com"
-                                    defaultValue={environment.host}
+                                    value={host}
                                     onChange={event => {
                                         setHost(event.target.value);
                                     }}
@@ -149,10 +164,10 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                                 />
                                 <Input
                                     placeholder="eg: /decision/v1/login/password"
+                                    value={authUrl}
                                     onChange={event => {
                                         setAuthUrl(event.target.value);
                                     }}
-                                    defaultValue={environment.authUrl}
                                 />
                             </InputGroup>
                         </FormControl>
@@ -167,7 +182,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
     "encrypted": false,
 }
                                 `}
-                                defaultValue={environment.authBody}
+                                value={authBody}
                                 onChange={event => {
                                     setAuthBody(event.target.value);
                                 }}
@@ -182,7 +197,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                                 />
                                 <Input
                                     placeholder={`eg: (json格式) ["data", "token"]`}
-                                    defaultValue={environment.tokenPath}
+                                    value={tokenPath}
                                     onChange={event => {
                                         setTokenPath(event.target.value);
                                     }}
