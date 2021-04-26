@@ -86,7 +86,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
             props.value?.environment?.tokenPath ||
                 defaultValue.environment.tokenPath
         );
-    }, [props]);
+    }, [props.value]);
 
     const toast = useToast();
     const checkValid = () => {
