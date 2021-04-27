@@ -42,15 +42,14 @@ const AccountModal: FC<AccountModalProps> = props => {
         onConfirm,
         loading,
         loadingText = '',
-        value = { username: '', password: '' },
     } = props;
-    const [username, setUsername] = React.useState(value.username);
-    const [password, setPassword] = React.useState(value.password);
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
 
     React.useEffect(() => {
         setUsername(props.value?.username || '');
         setPassword(props.value?.password || '');
-    }, [props.value]);
+    }, [props.value, props.isOpen]);
 
     const toast = useToast();
     const checkValid = () => {
@@ -83,7 +82,7 @@ const AccountModal: FC<AccountModalProps> = props => {
                                 />
                                 <Input
                                     placeholder="测试账号"
-                                    defaultValue={value.username}
+                                    defaultValue={username}
                                     onChange={event => {
                                         setUsername(event.target.value);
                                     }}
@@ -98,7 +97,7 @@ const AccountModal: FC<AccountModalProps> = props => {
                                 />
                                 <Input
                                     placeholder="密码"
-                                    defaultValue={value.password}
+                                    defaultValue={password}
                                     onChange={event => {
                                         setPassword(event.target.value);
                                     }}

@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
     Box,
     Button,
@@ -23,6 +23,7 @@ import _ from 'lodash';
 import React, { FC } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useUrlPath } from '../../../../../hooks/url';
+import { QUERY_ACCOUNT } from '../../../../../query/account';
 import { AccountParams } from './AccountModal';
 import IssueUploadItem from './IssueUploadItem';
 
@@ -50,19 +51,6 @@ export interface HarResult {
     content: string;
     selected?: boolean;
 }
-
-const QUERY_ACCOUNT = gql`
-    query account($input: String!) {
-        findAllAccounts(input: $input) {
-            id
-            name
-            environment {
-                username
-                password
-            }
-        }
-    }
-`;
 
 function dealWithHarLists(inputs: string[]) {
     return _.reduce<string, HarResult[]>(
@@ -136,11 +124,6 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
         try {
             const harLists = dealWithHarLists(data);
             setHarLists(harLists);
-            toast({
-                description: '上传成功!',
-                position: 'top',
-                status: 'success',
-            });
         } catch (e) {
             toast({
                 description: '上传失败!',
@@ -206,14 +189,36 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                                 method={har.method}
                                                 selected={allSelected}
                                                 onChange={selected => {
-                                                    harLists[
-                                                        index
-                                                    ].selected = selected;
-                                                    setHarLists(harLists);
+                                                    setHarLists(
+                                                        harLists.map(
+                                                            (har, idx) => {
+                                                                return {
+                                                                    ...har,
+                                                                    selected:
+                                                                        index ===
+                                                                        idx
+                                                                            ? selected
+                                                                            : har.selected,
+                                                                };
+                                                            }
+                                                        )
+                                                    );
                                                 }}
                                                 onNameChange={name => {
-                                                    harLists[index].name = name;
-                                                    setHarLists(harLists);
+                                                    setHarLists(
+                                                        harLists.map(
+                                                            (har, idx) => {
+                                                                return {
+                                                                    ...har,
+                                                                    name:
+                                                                        index ===
+                                                                        idx
+                                                                            ? name
+                                                                            : har.name,
+                                                                };
+                                                            }
+                                                        )
+                                                    );
                                                 }}
                                             />
                                         );

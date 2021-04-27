@@ -16,6 +16,7 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
+import _ from 'lodash';
 import React, { FC } from 'react';
 import { FcFile, FcFolder, FcPlus } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
@@ -23,6 +24,10 @@ import { RoutePath, useUrlPath } from '../../../../hooks/url';
 import AccountViewer from './AccountViewer';
 import AccountModal, { AccountParams } from './modal/AccountModal';
 import IssueUploadModal, { HarResult } from './modal/IssueUploadModal';
+
+function parseInputId(storeFieldName: string) {
+    return storeFieldName.match(/"input":"(.*)"/)?.[1];
+}
 
 const ADD_ACCOUNT = gql`
     mutation createAccount($input: CreateAccountInput!) {
@@ -36,6 +41,7 @@ const ADD_ISSUES = gql`
     mutation createAccounts($hars: [CreateIssuesInput!]!, $position: String!) {
         createIssues(hars: $hars, position: $position) {
             id
+            accountId
         }
     }
 `;
@@ -67,16 +73,22 @@ const AccountContainer: FC = () => {
         update(cache, data) {
             cache.modify({
                 fields: {
-                    findAllAccounts(existingAccounts = []) {
-                        const newProjectRef = cache.writeFragment({
-                            data: data.data?.createAccount,
-                            fragment: gql`
-                                fragment NewAccount on AccountEntity {
-                                    id
-                                }
-                            `,
-                        });
-                        return [...existingAccounts, newProjectRef];
+                    findAllAccounts(existingAccounts = [], { storeFieldName }) {
+                        const storeProjectId = parseInputId(storeFieldName);
+
+                        if (_.trim(storeProjectId) === projectId) {
+                            const newProjectRef = cache.writeFragment({
+                                data: data.data?.createAccount,
+                                fragment: gql`
+                                    fragment NewAccount on AccountEntity {
+                                        id
+                                    }
+                                `,
+                            });
+                            return [...existingAccounts, newProjectRef];
+                        }
+
+                        return existingAccounts;
                     },
                 },
             });
@@ -86,6 +98,7 @@ const AccountContainer: FC = () => {
         {
             createIssues: {
                 id: string;
+                accountId: string;
             }[];
         },
         {
@@ -96,16 +109,29 @@ const AccountContainer: FC = () => {
         update(cache, data) {
             cache.modify({
                 fields: {
-                    findAllIssues(existingIssues = []) {
-                        const newIssueRefs = cache.writeFragment({
-                            data: data.data?.createIssues,
-                            fragment: gql`
-                                fragment newIssue on IssueEntity {
-                                    id
+                    findAllIssues(existingIssues = [], { storeFieldName }) {
+                        const storeAccountId = parseInputId(storeFieldName);
+                        const accountId = _.first(data.data?.createIssues)
+                            ?.accountId;
+
+                        if (storeAccountId === accountId) {
+                            const newIssueRefs = _.map(
+                                data.data?.createIssues,
+                                issue => {
+                                    return cache.writeFragment({
+                                        data: issue,
+                                        fragment: gql`
+                                            fragment newIssue on IssueEntity {
+                                                id
+                                            }
+                                        `,
+                                    });
                                 }
-                            `,
-                        });
-                        return [...existingIssues, newIssueRefs];
+                            );
+                            return [...existingIssues, ...newIssueRefs];
+                        }
+
+                        return existingIssues;
                     },
                 },
             });
@@ -180,6 +206,11 @@ const AccountContainer: FC = () => {
 
         if (response.data) {
             onUploadClose();
+            toast({
+                description: '上传成功!',
+                position: 'top',
+                status: 'success',
+            });
         } else if (response.errors) {
             toast({
                 description: '添加失败',

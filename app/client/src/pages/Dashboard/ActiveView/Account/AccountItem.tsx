@@ -1,4 +1,4 @@
-import { Reference, useMutation } from '@apollo/client';
+import { gql, Reference, useMutation } from '@apollo/client';
 import {
     Accordion,
     AccordionButton,
@@ -22,7 +22,6 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
-import gql from 'graphql-tag';
 import _ from 'lodash';
 import React, { FC } from 'react';
 import { IconType } from 'react-icons';
@@ -79,7 +78,6 @@ function createActionButton(icon: IconType, label: string, onClick = () => {}) {
 }
 
 const AccountItem: FC<AccountItemProps> = props => {
-    let isInit = true;
     const { id, name, environment } = props;
     const bg = useColorModeValue(
         '#fff linear-gradient( 135deg, rgba(250, 215, 161, 0.3) 10%, rgba(233, 109, 133, 0.3) 100%);',
@@ -120,8 +118,11 @@ const AccountItem: FC<AccountItemProps> = props => {
         update(cache, data) {
             cache.modify({
                 fields: {
-                    findAllAccounts(existingAccounts: Reference[] = []) {
-                        const newAccountRef = cache.writeFragment({
+                    findAllAccounts(
+                        existingAccounts: Reference[] = [],
+                        { readField }
+                    ) {
+                        const deleteAccountRef = cache.writeFragment({
                             data: data.data?.deleteAccount,
                             fragment: gql`
                                 fragment Account on AccountEntity {
@@ -130,7 +131,10 @@ const AccountItem: FC<AccountItemProps> = props => {
                             `,
                         });
                         return existingAccounts.filter(account => {
-                            return account.__ref !== newAccountRef?.__ref;
+                            return (
+                                readField('id', deleteAccountRef) !==
+                                readField('id', account)
+                            );
                         });
                     },
                 },
@@ -190,7 +194,7 @@ const AccountItem: FC<AccountItemProps> = props => {
                 position: 'top',
             });
         } else {
-            onDeleteTipClose();
+            // onDeleteTipClose();
             toast({
                 description: '删除成功',
                 status: 'success',
@@ -203,10 +207,6 @@ const AccountItem: FC<AccountItemProps> = props => {
         <Accordion allowToggle>
             <AccordionItem borderWidth={1} boxShadow="md">
                 {({ isExpanded }) => {
-                    if (isExpanded) {
-                        isInit = false;
-                    }
-
                     return (
                         <>
                             <AccordionButton
@@ -220,6 +220,7 @@ const AccountItem: FC<AccountItemProps> = props => {
                                 }}
                                 h="4rem"
                                 bg={bg}
+                                zIndex="1"
                             >
                                 <Icon
                                     as={isExpanded ? FcOpenedFolder : FcFolder}
@@ -294,8 +295,8 @@ const AccountItem: FC<AccountItemProps> = props => {
                                 <AccordionIcon />
                             </AccordionButton>
                             <AccordionPanel>
-                                {isExpanded || !isInit ? (
-                                    <IssueContainer />
+                                {isExpanded ? (
+                                    <IssueContainer id={id} />
                                 ) : (
                                     <></>
                                 )}

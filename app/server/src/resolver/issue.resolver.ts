@@ -5,7 +5,7 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-express';
 import { getMongoRepository } from 'typeorm';
 
@@ -29,6 +29,22 @@ export class IssueResolver {
                     });
                 })
             );
+
+            return issues;
+        } catch (error) {
+            throw new ApolloError(error);
+        }
+    }
+
+    @Query(() => [IssueEntity])
+    async findAllIssues(@Args('input') id: string): Promise<IssueEntity[]> {
+        try {
+            const issues = await getMongoRepository(IssueEntity).find({
+                select: ['id', 'name', 'url', 'method'],
+                where: {
+                    accountId: id,
+                },
+            });
 
             return issues;
         } catch (error) {

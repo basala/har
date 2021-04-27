@@ -6,20 +6,27 @@ import { FcInTransit } from 'react-icons/fc';
 interface EmptyPaneProps {
     text?: string;
     icon?: IconType;
+    fontSize?: number;
+    iconSize?: number;
 }
 
 const EmptyPane: FC<EmptyPaneProps> = props => {
-    const { text = '施工中...', icon = FcInTransit } = props;
+    const {
+        text = '施工中...',
+        icon = FcInTransit,
+        fontSize = 16,
+        iconSize = 40,
+    } = props;
 
     return (
         <Center h="100%" w="100%">
             <Stack>
                 <Center>
-                    <Icon as={icon} boxSize={40} />
+                    <Icon as={icon} boxSize={iconSize} />
                 </Center>
                 <Text
                     textAlign="center"
-                    fontSize={16}
+                    fontSize={fontSize}
                     fontWeight="bold"
                     color={useColorModeValue('blackAlpha.600', 'light')}
                 >

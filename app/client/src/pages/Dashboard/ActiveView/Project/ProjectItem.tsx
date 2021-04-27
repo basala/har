@@ -94,8 +94,11 @@ const ProjectItem: FC<ProjectItemProps> = props => {
         update(cache, data) {
             cache.modify({
                 fields: {
-                    findAllProjects(existingProjects: Reference[] = []) {
-                        const newProjectRef = cache.writeFragment({
+                    findAllProjects(
+                        existingProjects: Reference[] = [],
+                        { readField }
+                    ) {
+                        const deleteProjectRef = cache.writeFragment({
                             data: data.data?.deleteProject,
                             fragment: gql`
                                 fragment Project on ProjectEntity {
@@ -104,7 +107,10 @@ const ProjectItem: FC<ProjectItemProps> = props => {
                             `,
                         });
                         return existingProjects.filter(project => {
-                            return project.__ref !== newProjectRef?.__ref;
+                            return (
+                                readField('id', project) !==
+                                readField('id', deleteProjectRef)
+                            );
                         });
                     },
                 },
@@ -170,7 +176,7 @@ const ProjectItem: FC<ProjectItemProps> = props => {
                 position: 'top',
             });
         } else {
-            onDeleteTipClose();
+            // onDeleteTipClose();
             toast({
                 description: '删除成功',
                 status: 'success',

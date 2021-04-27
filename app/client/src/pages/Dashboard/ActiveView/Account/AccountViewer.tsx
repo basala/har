@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Box, VStack } from '@chakra-ui/react';
 import _ from 'lodash';
 import React, { FC } from 'react';
@@ -6,6 +6,7 @@ import { FcExpired, FcHighPriority } from 'react-icons/fc';
 import EmptyPane from '../../../../components/Exception/EmptyPane';
 import CatLoading from '../../../../components/Loading/CatLoading';
 import { useUrlPath } from '../../../../hooks/url';
+import { QUERY_ACCOUNT } from '../../../../query/account';
 import AccountItem from './AccountItem';
 import { AccountParams } from './modal/AccountModal';
 
@@ -13,19 +14,6 @@ interface AccountViewerProps {
     isAdding: boolean;
     setAdding: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-const QUERY_ACCOUNT = gql`
-    query account($input: String!) {
-        findAllAccounts(input: $input) {
-            id
-            name
-            environment {
-                username
-                password
-            }
-        }
-    }
-`;
 
 const AccountViewer: FC<AccountViewerProps> = props => {
     const [, projectId] = useUrlPath();
