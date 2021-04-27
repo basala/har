@@ -1,19 +1,15 @@
 import { GQLAuthGuard } from '@auth';
-import { CreateIssuesInput, IssueEntity } from '@entity';
-import {
-    ClassSerializerInterceptor,
-    UseGuards,
-    UseInterceptors,
-} from '@nestjs/common';
+import { CreateIssuesInput, IssueEntity, UpdateIssueInput } from '@entity';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { ApolloError } from 'apollo-server-express';
+import { ApolloError, ForbiddenError } from 'apollo-server-express';
+import { plainToClass } from 'class-transformer';
 import { getMongoRepository } from 'typeorm';
 
 @Resolver('Issue')
 @UseGuards(GQLAuthGuard)
 export class IssueResolver {
     @Mutation(() => [IssueEntity])
-    @UseInterceptors(ClassSerializerInterceptor)
     async createIssues(
         @Args('hars', { type: () => [CreateIssuesInput] })
         hars: CreateIssuesInput[],
@@ -47,6 +43,65 @@ export class IssueResolver {
             });
 
             return issues;
+        } catch (error) {
+            throw new ApolloError(error);
+        }
+    }
+
+    @Mutation(() => IssueEntity)
+    async updateIssue(
+        @Args('input') input: UpdateIssueInput
+    ): Promise<IssueEntity> {
+        try {
+            const existedIssue = await getMongoRepository(IssueEntity).findOne({
+                _id: input.id,
+            });
+
+            if (!existedIssue) {
+                throw new ForbiddenError('Project does not exists.');
+            }
+
+            const value = {
+                name: input.name,
+                updateAt: Date.now(),
+            };
+            await getMongoRepository(IssueEntity).update(
+                {
+                    _id: input.id,
+                },
+                value
+            );
+
+            return plainToClass(
+                IssueEntity,
+                {
+                    ...existedIssue,
+                    ...value,
+                },
+                {
+                    excludeExtraneousValues: true,
+                }
+            );
+        } catch (error) {
+            throw new ApolloError(error);
+        }
+    }
+
+    @Mutation(() => IssueEntity)
+    async deleteIssue(@Args('id') id: string): Promise<IssueEntity> {
+        try {
+            const existedIssue = await getMongoRepository(IssueEntity).findOne({
+                _id: id,
+            });
+
+            if (!existedIssue) {
+                throw new ForbiddenError('issue does not exists.');
+            }
+            await getMongoRepository(IssueEntity).delete({
+                _id: id,
+            });
+
+            return existedIssue;
         } catch (error) {
             throw new ApolloError(error);
         }

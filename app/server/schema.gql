@@ -90,6 +90,8 @@ type Mutation {
   updateAccount(input: UpdateAccountInput!): AccountEntity!
   deleteAccount(id: String!): AccountEntity!
   createIssues(position: String!, hars: [CreateIssuesInput!]!): [IssueEntity!]!
+  updateIssue(input: UpdateIssueInput!): IssueEntity!
+  deleteIssue(id: String!): IssueEntity!
 }
 
 input CreateProjectInput {
@@ -134,4 +136,10 @@ input CreateIssuesInput {
   url: String!
   method: RequestType!
   content: String!
+  postData: String!
+}
+
+input UpdateIssueInput {
+  id: String!
+  name: String!
 }

@@ -1,5 +1,10 @@
 import { GQLAuthGuard } from '@auth';
-import { AccountEntity, CreateAccountInput, UpdateAccountInput } from '@entity';
+import {
+    AccountEntity,
+    CreateAccountInput,
+    IssueEntity,
+    UpdateAccountInput,
+} from '@entity';
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError, ForbiddenError } from 'apollo-server-express';
@@ -101,9 +106,14 @@ export class AccountResolver {
             if (!existedProject) {
                 throw new ForbiddenError('Project does not exists.');
             }
-            await getMongoRepository(AccountEntity).delete({
-                _id: id,
-            });
+            await Promise.all([
+                getMongoRepository(AccountEntity).deleteMany({
+                    _id: id,
+                }),
+                getMongoRepository(IssueEntity).deleteMany({
+                    accountId: id,
+                }),
+            ]);
 
             return existedProject;
         } catch (error) {

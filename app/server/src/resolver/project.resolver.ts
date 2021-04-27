@@ -1,6 +1,8 @@
 import { CurrentUser, GQLAuthGuard } from '@auth';
 import {
+    AccountEntity,
     CreateProjectInput,
+    IssueEntity,
     ProjectEntity,
     UpdateProjectInput,
     UserEntity,
@@ -133,9 +135,26 @@ export class ProjectResolver {
             if (!existedProject) {
                 throw new ForbiddenError('Project does not exists.');
             }
-            await getMongoRepository(ProjectEntity).delete({
-                _id: id,
+            const accounts = await getMongoRepository(AccountEntity).find({
+                select: ['id'],
+                where: {
+                    projectId: id,
+                },
             });
+
+            await Promise.all([
+                getMongoRepository(ProjectEntity).deleteMany({
+                    _id: id,
+                }),
+                getMongoRepository(AccountEntity).deleteMany({
+                    projectId: id,
+                }),
+                ...accounts.map(async account => {
+                    return getMongoRepository(IssueEntity).deleteMany({
+                        accountId: account.id,
+                    });
+                }),
+            ]);
 
             return existedProject;
         } catch (error) {

@@ -36,6 +36,7 @@ interface IssueUploadModalProps {
 
 interface HarEntry extends Entry {
     _resourceType:
+        | 'fetch'
         | 'xhr'
         | 'image'
         | 'websocket'
@@ -49,6 +50,7 @@ export interface HarResult {
     url: string;
     method: Method;
     content: string;
+    postData: string;
     selected?: boolean;
 }
 
@@ -63,7 +65,9 @@ function dealWithHarLists(inputs: string[]) {
                 ...harObj.log.entries
                     .filter(entry => {
                         return (
-                            (entry as HarEntry)._resourceType === 'xhr' &&
+                            ((entry as HarEntry)._resourceType === 'xhr' ||
+                                (entry as HarEntry)._resourceType ===
+                                    'fetch') &&
                             entry.response.content.mimeType ===
                                 'application/json'
                         );
@@ -75,7 +79,10 @@ function dealWithHarLists(inputs: string[]) {
                             name: request.url,
                             url: request.url,
                             method: request.method.toUpperCase() as Method,
-                            content: response.content.text || '',
+                            content:
+                                response.content.text || JSON.stringify(''),
+                            postData:
+                                request.postData?.text || JSON.stringify(''),
                         };
                     }),
             ];
@@ -123,6 +130,15 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
 
         try {
             const harLists = dealWithHarLists(data);
+
+            if (_.size(harLists) === 0) {
+                toast({
+                    description: '未解析出有效请求',
+                    position: 'top',
+                    status: 'error',
+                });
+            }
+
             setHarLists(harLists);
         } catch (e) {
             toast({
@@ -315,6 +331,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                             url: har.url,
                                             method: har.method,
                                             content: har.content,
+                                            postData: har.postData,
                                         };
                                     }),
                                 position,

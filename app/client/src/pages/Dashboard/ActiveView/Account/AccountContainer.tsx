@@ -38,7 +38,7 @@ const ADD_ACCOUNT = gql`
 `;
 
 const ADD_ISSUES = gql`
-    mutation createAccounts($hars: [CreateIssuesInput!]!, $position: String!) {
+    mutation createIssues($hars: [CreateIssuesInput!]!, $position: String!) {
         createIssues(hars: $hars, position: $position) {
             id
             accountId

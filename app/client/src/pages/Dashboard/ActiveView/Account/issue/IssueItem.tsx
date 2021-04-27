@@ -1,3 +1,4 @@
+import { gql, Reference, useMutation } from '@apollo/client';
 import {
     AlertDialog,
     AlertDialogBody,
@@ -10,18 +11,41 @@ import {
     Box,
     Button,
     ButtonGroup,
+    Center,
     Code,
     HStack,
     Icon,
-    IconButton,
     Text,
     Tooltip,
     useDisclosure,
+    useToast,
 } from '@chakra-ui/react';
 import { Method } from 'axios';
 import React, { FC } from 'react';
+import { IconType } from 'react-icons';
 import { FcEditImage, FcFullTrash, FcStart, FcVideoFile } from 'react-icons/fc';
 import IssueModal from './IssueModal';
+
+export function createActionButton(
+    icon: IconType,
+    label: string,
+    onClick = () => {}
+) {
+    return (
+        <Tooltip label={label}>
+            <Center
+                onClick={onClick}
+                borderRadius={20}
+                boxSize={10}
+                bg="gray.200"
+                _hover={{ bg: 'gray.100' }}
+                cursor="pointer"
+            >
+                <Icon as={icon} fontSize={20} />
+            </Center>
+        </Tooltip>
+    );
+}
 
 export interface Issue {
     id: string;
@@ -31,12 +55,35 @@ export interface Issue {
 }
 
 interface IssueItemProps {
+    id: string;
     issue: Issue;
 }
+
+interface UpdateIssueInput {
+    id: string;
+    name: string;
+}
+
+const UPDATE_ISSUE = gql`
+    mutation updateIssue($input: UpdateIssueInput!) {
+        updateIssue(input: $input) {
+            id
+            name
+        }
+    }
+`;
+const DELETE_ISSUE = gql`
+    mutation deleteIssue($id: String!) {
+        deleteIssue(id: $id) {
+            id
+        }
+    }
+`;
 
 const IssueItem: FC<IssueItemProps> = props => {
     const {
         issue: { name, url, method },
+        id,
     } = props;
     const { pathname } = new URL(url);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -46,6 +93,115 @@ const IssueItem: FC<IssueItemProps> = props => {
         onClose: onDeleteTipClose,
     } = useDisclosure();
     const cancelRef = React.useRef(null);
+
+    const [updateIssue, { loading: updateLoading }] = useMutation<
+        {
+            updateIssue: {
+                id: string;
+                name: string;
+            };
+        },
+        {
+            input: UpdateIssueInput;
+        }
+    >(UPDATE_ISSUE);
+    const [deleteIssue, { loading: deleteLoading }] = useMutation<
+        {
+            deleteIssue: {
+                id: string;
+            };
+        },
+        {
+            id: string;
+        }
+    >(DELETE_ISSUE, {
+        update(cache, data) {
+            cache.modify({
+                fields: {
+                    findAllIssues(
+                        existingIssues: Reference[] = [],
+                        { readField }
+                    ) {
+                        const deleteAccountRef = cache.writeFragment({
+                            data: data.data?.deleteIssue,
+                            fragment: gql`
+                                fragment Account on AccountEntity {
+                                    id
+                                }
+                            `,
+                        });
+                        return existingIssues.filter(account => {
+                            return (
+                                readField('id', deleteAccountRef) !==
+                                readField('id', account)
+                            );
+                        });
+                    },
+                },
+            });
+        },
+    });
+
+    const toast = useToast();
+    const onUpdate = async (newName: string) => {
+        if (name === newName) {
+            onClose();
+        } else {
+            const response = await updateIssue({
+                variables: {
+                    input: {
+                        id,
+                        name: newName,
+                    },
+                },
+            }).catch(errors => {
+                return {
+                    errors,
+                };
+            });
+
+            if (response.errors) {
+                toast({
+                    description: '更新失败',
+                    status: 'error',
+                    position: 'top',
+                });
+            } else {
+                onClose();
+                toast({
+                    description: '更新成功',
+                    status: 'success',
+                    position: 'top',
+                });
+            }
+        }
+    };
+    const onDelete = async () => {
+        const response = await deleteIssue({
+            variables: {
+                id,
+            },
+        }).catch(errors => {
+            return {
+                errors,
+            };
+        });
+
+        if (response.errors) {
+            toast({
+                description: '删除失败',
+                status: 'error',
+                position: 'top',
+            });
+        } else {
+            // onDeleteTipClose();
+            toast({
+                description: '删除成功',
+                status: 'success',
+                position: 'top',
+            });
+        }
+    };
 
     return (
         <HStack
@@ -83,34 +239,15 @@ const IssueItem: FC<IssueItemProps> = props => {
                 </Code>
             </Tooltip>
             <ButtonGroup w="10rem">
-                <IconButton
-                    aria-label="run"
-                    isRound
-                    fontSize={20}
-                    icon={<FcStart />}
-                />
-                <IconButton
-                    aria-label="run"
-                    isRound
-                    fontSize={20}
-                    icon={<FcEditImage />}
-                    onClick={onOpen}
-                />
+                {createActionButton(FcStart, '执行')}
+                {createActionButton(FcEditImage, '编辑', onOpen)}
+                {createActionButton(FcFullTrash, '删除', onDeleteTipOpen)}
                 <IssueModal
                     isOpen={isOpen}
-                    loading={true}
+                    loading={updateLoading}
                     onClose={onClose}
-                    onConfirm={name => {
-                        console.log(name);
-                    }}
+                    onConfirm={onUpdate}
                     name={name}
-                />
-                <IconButton
-                    aria-label="run"
-                    isRound
-                    fontSize={20}
-                    onClick={onDeleteTipOpen}
-                    icon={<FcFullTrash />}
                 />
                 <AlertDialog
                     leastDestructiveRef={cancelRef}
@@ -127,10 +264,10 @@ const IssueItem: FC<IssueItemProps> = props => {
                                 取消
                             </Button>
                             <Button
-                                isLoading={true}
+                                isLoading={deleteLoading}
                                 colorScheme="red"
                                 ml={3}
-                                // onClick={onDelete}
+                                onClick={onDelete}
                             >
                                 确认
                             </Button>

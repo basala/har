@@ -15,16 +15,13 @@ import {
     Box,
     Button,
     ButtonGroup,
-    Center,
     Icon,
-    Tooltip,
     useColorModeValue,
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
 import _ from 'lodash';
 import React, { FC } from 'react';
-import { IconType } from 'react-icons';
 import {
     FcEditImage,
     FcFolder,
@@ -33,6 +30,7 @@ import {
     FcStart,
 } from 'react-icons/fc';
 import IssueContainer from './issue/IssueContainer';
+import { createActionButton } from './issue/IssueItem';
 import AccountModal, { AccountParams } from './modal/AccountModal';
 
 interface AccountItemProps {
@@ -60,22 +58,6 @@ const DELETE_ACCOUNT = gql`
         }
     }
 `;
-
-function createActionButton(icon: IconType, label: string, onClick = () => {}) {
-    return (
-        <Tooltip label={label}>
-            <Center
-                onClick={onClick}
-                borderRadius={20}
-                boxSize={10}
-                bg="gray.200"
-                _hover={{ bg: 'gray.100' }}
-            >
-                <Icon as={icon} fontSize={20} />
-            </Center>
-        </Tooltip>
-    );
-}
 
 const AccountItem: FC<AccountItemProps> = props => {
     const { id, name, environment } = props;
@@ -220,7 +202,6 @@ const AccountItem: FC<AccountItemProps> = props => {
                                 }}
                                 h="4rem"
                                 bg={bg}
-                                zIndex="1"
                             >
                                 <Icon
                                     as={isExpanded ? FcOpenedFolder : FcFolder}
