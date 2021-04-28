@@ -8,6 +8,7 @@ import { AuthResolver } from './resolver/auth.resolver';
 import { IssueResolver } from './resolver/issue.resolver';
 import { ProjectResolver } from './resolver/project.resolver';
 import { UserResolver } from './resolver/user.resolver';
+import { AccountModule } from './restful/account/account.module';
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { UserResolver } from './resolver/user.resolver';
         TypeOrmModule.forRootAsync({
             useClass: TypeormService,
         }),
+        AccountModule,
     ],
     controllers: [AppController],
     providers: [

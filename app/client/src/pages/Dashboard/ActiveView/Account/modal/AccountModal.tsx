@@ -1,5 +1,6 @@
 import Icon from '@chakra-ui/icon';
 import {
+    Box,
     Button,
     FormControl,
     FormLabel,
@@ -16,8 +17,11 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import React, { FC } from 'react';
 import { FcBusinessman, FcLock } from 'react-icons/fc';
+import { RemoteUrl } from '../../../../../config/apollo';
+import { useUrlPath } from '../../../../../hooks/url';
 
 interface AccountModalProps {
     header: string;
@@ -43,8 +47,10 @@ const AccountModal: FC<AccountModalProps> = props => {
         loading,
         loadingText = '',
     } = props;
+    const [, projectId] = useUrlPath();
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const [connectionLoading, setConnectionLoading] = React.useState(false);
 
     React.useEffect(() => {
         setUsername(props.value?.username || '');
@@ -65,6 +71,40 @@ const AccountModal: FC<AccountModalProps> = props => {
 
         return true;
     };
+    const testConnection = React.useCallback(async () => {
+        setConnectionLoading(true);
+
+        const response = await axios
+            .post<{
+                valid: boolean;
+            }>(RemoteUrl + '/account/connection', {
+                projectId,
+                username,
+                password,
+            })
+            .catch(error => {
+                return {
+                    data: {
+                        valid: false,
+                    },
+                };
+            });
+
+        setConnectionLoading(false);
+        if (response.data.valid) {
+            toast({
+                description: '校验成功',
+                status: 'success',
+                position: 'top',
+            });
+        } else {
+            toast({
+                description: '校验失败',
+                status: 'error',
+                position: 'top',
+            });
+        }
+    }, [password, username, projectId]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="xl">
@@ -107,6 +147,16 @@ const AccountModal: FC<AccountModalProps> = props => {
                     </VStack>
                 </ModalBody>
                 <ModalFooter>
+                    <Box flex="1">
+                        <Button
+                            colorScheme="teal"
+                            justifySelf="flex-start"
+                            isLoading={connectionLoading}
+                            onClick={testConnection}
+                        >
+                            测试连接
+                        </Button>
+                    </Box>
                     <Button mr={3} onClick={onClose}>
                         取消
                     </Button>
