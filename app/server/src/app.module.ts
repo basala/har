@@ -9,6 +9,7 @@ import { IssueResolver } from './resolver/issue.resolver';
 import { ProjectResolver } from './resolver/project.resolver';
 import { UserResolver } from './resolver/user.resolver';
 import { AccountModule } from './restful/account/account.module';
+import { ExecutionModule } from './restful/execution/execution.module';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { AccountModule } from './restful/account/account.module';
             useClass: TypeormService,
         }),
         AccountModule,
+        ExecutionModule,
     ],
     controllers: [AppController],
     providers: [

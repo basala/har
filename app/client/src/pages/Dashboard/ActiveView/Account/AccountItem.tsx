@@ -221,14 +221,18 @@ const AccountItem: FC<AccountItemProps> = props => {
                                     }}
                                     mr="1rem"
                                 >
-                                    {createActionButton(FcStart, '执行')}
                                     {createActionButton(
-                                        FcEditImage,
+                                        <FcStart />,
+                                        '执行',
+                                        () => {}
+                                    )}
+                                    {createActionButton(
+                                        <FcEditImage />,
                                         '编辑',
                                         onOpen
                                     )}
                                     {createActionButton(
-                                        FcFullTrash,
+                                        <FcFullTrash />,
                                         '删除',
                                         onDeleteTipOpen
                                     )}

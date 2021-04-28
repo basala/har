@@ -11,38 +11,38 @@ import {
     Box,
     Button,
     ButtonGroup,
-    Center,
     Code,
     HStack,
     Icon,
+    IconButton,
     Text,
     Tooltip,
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
-import { Method } from 'axios';
+import axios, { Method } from 'axios';
 import React, { FC } from 'react';
-import { IconType } from 'react-icons';
 import { FcEditImage, FcFullTrash, FcStart, FcVideoFile } from 'react-icons/fc';
+import { RemoteUrl } from '../../../../../config/apollo';
 import IssueModal from './IssueModal';
 
 export function createActionButton(
-    icon: IconType,
+    icon: React.ReactElement,
     label: string,
-    onClick = () => {}
+    onClick: () => void,
+    loading = false
 ) {
     return (
         <Tooltip label={label}>
-            <Center
+            <IconButton
+                position="inherit"
+                icon={icon}
+                aria-label={label}
+                isRound
+                isLoading={loading}
+                fontSize={20}
                 onClick={onClick}
-                borderRadius={20}
-                boxSize={10}
-                bg="gray.200"
-                _hover={{ bg: 'gray.100' }}
-                cursor="pointer"
-            >
-                <Icon as={icon} fontSize={20} />
-            </Center>
+            />
         </Tooltip>
     );
 }
@@ -201,6 +201,25 @@ const IssueItem: FC<IssueItemProps> = props => {
         }
     };
 
+    const [executeLoading, setExecuteLoading] = React.useState(false);
+    const executeIssue = React.useCallback(async () => {
+        setExecuteLoading(true);
+
+        const response = await axios
+            .post<string>(`${RemoteUrl}/execute/${id}`, {
+                type: 3,
+            })
+            .catch(error => {
+                return {
+                    data: {
+                        valid: false,
+                    },
+                };
+            });
+
+        setExecuteLoading(false);
+    }, []);
+
     return (
         <HStack
             p={2}
@@ -237,9 +256,14 @@ const IssueItem: FC<IssueItemProps> = props => {
                 </Code>
             </Tooltip>
             <ButtonGroup w="10rem">
-                {createActionButton(FcStart, '执行')}
-                {createActionButton(FcEditImage, '编辑', onOpen)}
-                {createActionButton(FcFullTrash, '删除', onDeleteTipOpen)}
+                {createActionButton(
+                    <FcStart />,
+                    '执行',
+                    executeIssue,
+                    executeLoading
+                )}
+                {createActionButton(<FcEditImage />, '编辑', onOpen)}
+                {createActionButton(<FcFullTrash />, '删除', onDeleteTipOpen)}
                 <IssueModal
                     isOpen={isOpen}
                     loading={updateLoading}
