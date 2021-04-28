@@ -55,7 +55,6 @@ export interface Issue {
 }
 
 interface IssueItemProps {
-    id: string;
     issue: Issue;
 }
 
@@ -82,10 +81,9 @@ const DELETE_ISSUE = gql`
 
 const IssueItem: FC<IssueItemProps> = props => {
     const {
-        issue: { name, url, method },
-        id,
+        issue: { name, url, method, id },
     } = props;
-    const { pathname } = new URL(url);
+    const { pathname, search } = new URL(url);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const {
         isOpen: isDeleteTipOpen,
@@ -227,7 +225,7 @@ const IssueItem: FC<IssueItemProps> = props => {
             >
                 {name}
             </Text>
-            <Tooltip label={pathname}>
+            <Tooltip label={pathname + search}>
                 <Code
                     px={2}
                     w="20rem"
@@ -235,7 +233,7 @@ const IssueItem: FC<IssueItemProps> = props => {
                     overflow="hidden"
                     textOverflow="ellipsis"
                 >
-                    {pathname}
+                    {pathname + search}
                 </Code>
             </Tooltip>
             <ButtonGroup w="10rem">

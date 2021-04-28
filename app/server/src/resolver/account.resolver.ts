@@ -3,6 +3,7 @@ import {
     AccountEntity,
     CreateAccountInput,
     IssueEntity,
+    ProjectEntity,
     UpdateAccountInput,
 } from '@entity';
 import { UseGuards } from '@nestjs/common';
@@ -19,6 +20,14 @@ export class AccountResolver {
         @Args('input') projectId: string
     ): Promise<AccountEntity[]> {
         try {
+            const project = await getMongoRepository(ProjectEntity).findOne({
+                _id: projectId,
+            });
+
+            if (!project) {
+                throw new ApolloError('project does not exist');
+            }
+
             const accounts = await getMongoRepository(AccountEntity).find({
                 select: ['id', 'name', 'environment'],
                 where: {

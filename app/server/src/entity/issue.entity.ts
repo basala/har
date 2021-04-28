@@ -1,6 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
-import GraphQLJSON from 'graphql-type-json';
 import { Column, Entity, Index, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
 import { RequestType } from './scalar';
@@ -38,6 +37,11 @@ export class IssueEntity {
     @Column()
     @Expose()
     method: RequestType;
+
+    @Field(() => [String])
+    @Column()
+    @Expose()
+    fields: string[];
 
     @Column()
     @Type(() => Buffer)
@@ -90,14 +94,6 @@ export class IssueEntity {
     }
 }
 
-@ObjectType()
-export class FormatIssueEntity extends IssueEntity {
-    @Field(() => GraphQLJSON)
-    @Type(() => Buffer)
-    @Expose()
-    content: Buffer;
-}
-
 @InputType()
 export class CreateIssuesInput {
     @Field()
@@ -120,6 +116,10 @@ export class CreateIssuesInput {
     @Field()
     @Expose()
     postData: string;
+
+    @Field(() => [String])
+    @Expose()
+    fields: string[];
 }
 
 @InputType()

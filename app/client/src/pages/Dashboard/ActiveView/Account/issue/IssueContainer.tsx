@@ -81,7 +81,7 @@ const IssueContainer: FC<IssueContainerProps> = props => {
             {_.map(data?.findAllIssues, (issue, index) => {
                 return (
                     <Box key={index} pl={4}>
-                        <IssueItem issue={issue} id={issue.id} />
+                        <IssueItem issue={issue} />
                     </Box>
                 );
             })}

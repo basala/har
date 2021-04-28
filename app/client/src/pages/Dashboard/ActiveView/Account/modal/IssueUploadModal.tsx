@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/client';
 import {
-    Box,
     Button,
     Center,
     HStack,
@@ -51,6 +50,7 @@ export interface HarResult {
     method: Method;
     content: string;
     postData: string;
+    fields: string[];
     selected?: boolean;
 }
 
@@ -74,15 +74,25 @@ function dealWithHarLists(inputs: string[]) {
                     })
                     .map(entry => {
                         const { request, response } = entry;
+                        const content =
+                            response.content.text || JSON.stringify('');
+                        const data = JSON.parse(content);
+                        const resolvable =
+                            _.isPlainObject(data.data) &&
+                            _.keys(data.data).length > 0;
 
                         return {
                             name: request.url,
                             url: request.url,
                             method: request.method.toUpperCase() as Method,
-                            content:
-                                response.content.text || JSON.stringify(''),
+                            content,
                             postData:
                                 request.postData?.text || JSON.stringify(''),
+                            fields: resolvable
+                                ? _.map(data.data, (value, key) => {
+                                      return `data.${key}`;
+                                  })
+                                : ['data'],
                         };
                     }),
             ];
@@ -94,7 +104,6 @@ function dealWithHarLists(inputs: string[]) {
 const IssueUploadModal: FC<IssueUploadModalProps> = props => {
     const { isOpen, onClose, onConfirm, loading } = props;
     const [harLists, setHarLists] = React.useState<HarResult[]>([]);
-    const [allSelected, setAllSelected] = React.useState(false);
     const [position, setPosition] = React.useState('');
     const [, projectId] = useUrlPath();
     const { data } = useQuery<
@@ -116,7 +125,6 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
 
     React.useEffect(() => {
         setHarLists([]);
-        setAllSelected(false);
         setPosition('');
     }, [props.isOpen]);
 
@@ -190,20 +198,19 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                             >
                                 {isDragActive
                                     ? 'Tips: 仅支持HAR文件'
-                                    : '点击或者拖拽上传文件...'}
+                                    : _.size(harLists) === 0
+                                    ? '点击或者拖拽上传文件...'
+                                    : '重新上传...'}
                             </Text>
                         </Center>
                         {_.size(harLists) > 0 ? (
                             <Stack borderWidth={2} borderRadius={8} p={2}>
-                                <Box overflow="auto" maxH="25rem">
+                                <Stack overflow="auto" maxH="25rem" spacing={4}>
                                     {_.map(harLists, (har, index) => {
                                         return (
                                             <IssueUploadItem
                                                 key={index}
-                                                name={har.name}
-                                                url={har.url}
-                                                method={har.method}
-                                                selected={allSelected}
+                                                har={har}
                                                 onChange={selected => {
                                                     setHarLists(
                                                         harLists.map(
@@ -236,15 +243,42 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                                         )
                                                     );
                                                 }}
+                                                onFieldChange={(
+                                                    fieldName,
+                                                    selected
+                                                ) => {
+                                                    setHarLists(
+                                                        harLists.map(
+                                                            (har, idx) => {
+                                                                return {
+                                                                    ...har,
+                                                                    fields:
+                                                                        index ===
+                                                                        idx
+                                                                            ? selected
+                                                                                ? [
+                                                                                      ...har.fields,
+                                                                                      fieldName,
+                                                                                  ]
+                                                                                : har.fields.filter(
+                                                                                      value =>
+                                                                                          value !==
+                                                                                          fieldName
+                                                                                  )
+                                                                            : har.fields,
+                                                                };
+                                                            }
+                                                        )
+                                                    );
+                                                }}
                                             />
                                         );
                                     })}
-                                </Box>
+                                </Stack>
                                 <HStack spacing={2}>
                                     <Button
                                         colorScheme="blue"
                                         onClick={() => {
-                                            setAllSelected(true);
                                             setHarLists(
                                                 harLists.map(har => {
                                                     return {
@@ -259,7 +293,6 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            setAllSelected(false);
                                             setHarLists(
                                                 harLists.map(har => {
                                                     return {
@@ -332,6 +365,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                             method: har.method,
                                             content: har.content,
                                             postData: har.postData,
+                                            fields: har.fields,
                                         };
                                     }),
                                 position,

@@ -104,7 +104,7 @@ const AccountModal: FC<AccountModalProps> = props => {
                 position: 'top',
             });
         }
-    }, [password, username, projectId]);
+    }, [projectId, username, password, toast]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="xl">

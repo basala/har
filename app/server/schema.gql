@@ -22,6 +22,7 @@ type IssueEntity {
   name: String!
   url: String!
   method: RequestType!
+  fields: [String!]!
   createAt: Float!
   updateAt: Float!
   id: String!
@@ -137,6 +138,7 @@ input CreateIssuesInput {
   method: RequestType!
   content: String!
   postData: String!
+  fields: [String!]!
 }
 
 input UpdateIssueInput {

@@ -25,7 +25,6 @@ interface IssueModalProps {
 const IssueModal: FC<IssueModalProps> = props => {
     const { isOpen, onClose, loading, onConfirm } = props;
     const [name, setName] = React.useState(props.name);
-
     React.useEffect(() => {
         setName(props.name);
     }, [props.name, isOpen]);
