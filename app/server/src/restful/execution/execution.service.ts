@@ -1,4 +1,9 @@
-import { AccountEntity, IssueEntity, ProjectEntity } from '@entity';
+import {
+    AccountEntity,
+    IssueEntity,
+    ProjectEntity,
+    ProjectEnvironment,
+} from '@entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { every, get } from 'lodash';
@@ -67,10 +72,31 @@ export class ExecutionService {
             throw new BadRequestException(error.message);
         });
 
+        return await this.executeSingle(
+            project.environment,
+            issue,
+            token
+        ).catch(error => {
+            throw new BadRequestException(error.message);
+        });
+    }
+
+    /**
+     * 执行单个用例
+     * @param projectEnv
+     * @param issue
+     * @param token
+     * @returns
+     */
+    async executeSingle(
+        projectEnv: ProjectEnvironment,
+        issue: IssueEntity,
+        token: string
+    ) {
         const { pathname, search } = new URL(issue.url);
         const response = await axios({
             url: pathname + search,
-            baseURL: project.environment.host,
+            baseURL: projectEnv.host,
             method: issue.method,
             data: JSON.parse(issue.postData.toString()),
             headers: {
