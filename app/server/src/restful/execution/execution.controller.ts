@@ -18,7 +18,7 @@ export class ExecutionController {
     async execute(@Param('id') id: string, @Body() config: ExecutionDto) {
         const { type, noticeId } = config;
 
-        let response: string;
+        let response;
         switch (type) {
             case ExecutionType.Project:
                 response = await this.executionService.executeProject(id);

@@ -5,7 +5,7 @@ import { Column, Entity, Index, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
 @ObjectType()
-class AccountEnvironment {
+export class AccountEnvironment {
     @Field()
     @Expose()
     username: string;

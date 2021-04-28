@@ -5,7 +5,7 @@ import { Column, Entity, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
 @ObjectType()
-class ProjectEnvironment {
+export class ProjectEnvironment {
     @Field()
     @Expose()
     host: string;
