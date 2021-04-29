@@ -192,6 +192,8 @@ const AccountItem: FC<AccountItemProps> = props => {
                     return (
                         <>
                             <AccordionButton
+                                as={Box}
+                                cursor="pointer"
                                 position="sticky"
                                 top="0"
                                 _hover={{
@@ -202,6 +204,8 @@ const AccountItem: FC<AccountItemProps> = props => {
                                 }}
                                 h="4rem"
                                 bg={bg}
+                                // TODO spiner覆盖问题
+                                zIndex="1"
                             >
                                 <Icon
                                     as={isExpanded ? FcOpenedFolder : FcFolder}

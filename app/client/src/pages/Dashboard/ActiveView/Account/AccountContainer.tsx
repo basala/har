@@ -244,7 +244,10 @@ const AccountContainer: FC = () => {
                         >
                             添加...
                         </MenuButton>
-                        <MenuList>
+                        <MenuList
+                            // TODO spiner覆盖问题
+                            zIndex="10"
+                        >
                             <MenuItem
                                 icon={<Icon as={FcFolder} boxSize={6} />}
                                 onClick={onOpen}

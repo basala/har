@@ -35,7 +35,6 @@ export function createActionButton(
     return (
         <Tooltip label={label}>
             <IconButton
-                position="inherit"
                 icon={icon}
                 aria-label={label}
                 isRound

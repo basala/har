@@ -204,7 +204,7 @@ const Login: FC = () => {
                     textAlign="center"
                     color={useColorModeValue('blackAlpha.600', 'light')}
                 >
-                    {registerMode ? 'Create an account' : 'Sign In to FineHar'}
+                    {registerMode ? 'Create an account' : 'Sign In to HarTest'}
                 </Heading>
 
                 <Stack py={8} px={4} spacing={4} textAlign="left">
@@ -284,7 +284,7 @@ const Login: FC = () => {
                     >
                         {registerMode
                             ? 'Already have an account? Go to Sign in'
-                            : 'New to FineHar? Create an account'}
+                            : 'New to? Create an account'}
                     </Link>
                 </Box>
             </Stack>
