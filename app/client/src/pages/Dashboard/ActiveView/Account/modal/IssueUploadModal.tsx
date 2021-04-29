@@ -351,7 +351,9 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                         colorScheme="blue"
                         disabled={
                             _.size(harLists.filter(har => har.selected)) ===
-                                0 || _.isEmpty(position)
+                                0 ||
+                            _.isEmpty(position) ||
+                            loading
                         }
                         isLoading={loading}
                         onClick={() => {

@@ -20,6 +20,7 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import _ from 'lodash';
 import React, { FC } from 'react';
 import {
@@ -29,6 +30,7 @@ import {
     FcOpenedFolder,
     FcStart,
 } from 'react-icons/fc';
+import { RemoteUrl } from '../../../../config/apollo';
 import IssueContainer from './issue/IssueContainer';
 import { createActionButton } from './issue/IssueItem';
 import AccountModal, { AccountParams } from './modal/AccountModal';
@@ -185,6 +187,27 @@ const AccountItem: FC<AccountItemProps> = props => {
         }
     };
 
+    const [executeLoading, setExecuteLoading] = React.useState(false);
+    const executeAccount = React.useCallback(async () => {
+        setExecuteLoading(true);
+
+        await axios
+            .post<{
+                valid: boolean;
+            }>(`${RemoteUrl}/execute/${id}`, {
+                type: 2,
+            })
+            .catch(error => {
+                return {
+                    data: {
+                        valid: false,
+                    },
+                };
+            });
+
+        setExecuteLoading(false);
+    }, [id]);
+
     return (
         <Accordion allowToggle>
             <AccordionItem borderWidth={1} boxShadow="md">
@@ -228,7 +251,8 @@ const AccountItem: FC<AccountItemProps> = props => {
                                     {createActionButton(
                                         <FcStart />,
                                         '执行',
-                                        () => {}
+                                        executeAccount,
+                                        executeLoading
                                     )}
                                     {createActionButton(
                                         <FcEditImage />,

@@ -3,6 +3,7 @@ import {
     BadRequestException,
     Body,
     Controller,
+    ForbiddenException,
     Post,
     UsePipes,
     ValidationPipe,
@@ -29,7 +30,7 @@ export class AccountController {
         });
 
         if (!projectEnv) {
-            throw new BadRequestException('project does not exist');
+            throw new ForbiddenException('project does not exist');
         }
 
         await generateToken(projectEnv.environment, {

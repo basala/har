@@ -204,8 +204,10 @@ const IssueItem: FC<IssueItemProps> = props => {
     const executeIssue = React.useCallback(async () => {
         setExecuteLoading(true);
 
-        const response = await axios
-            .post<string>(`${RemoteUrl}/execute/${id}`, {
+        await axios
+            .post<{
+                valid: boolean;
+            }>(`${RemoteUrl}/execute/${id}`, {
                 type: 3,
             })
             .catch(error => {
@@ -217,7 +219,7 @@ const IssueItem: FC<IssueItemProps> = props => {
             });
 
         setExecuteLoading(false);
-    }, []);
+    }, [id]);
 
     return (
         <HStack
