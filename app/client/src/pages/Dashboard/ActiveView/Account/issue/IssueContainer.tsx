@@ -80,7 +80,7 @@ const IssueContainer: FC<IssueContainerProps> = props => {
         <VStack minH="10rem" align="stretch" spacing={4}>
             {_.map(data?.findAllIssues, (issue, index) => {
                 return (
-                    <Box key={index} pl={4}>
+                    <Box key={issue.id} pl={4}>
                         <IssueItem issue={issue} />
                     </Box>
                 );

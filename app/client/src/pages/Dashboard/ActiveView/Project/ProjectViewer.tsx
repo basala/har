@@ -49,8 +49,8 @@ const ProjectViewer: FC = () => {
 
     return (
         <SimpleGrid columns={5} spacing={6}>
-            {_.map(data?.findAllProjects, (project, index) => {
-                return <ProjectItem key={index} {...project} />;
+            {_.map(data?.findAllProjects, project => {
+                return <ProjectItem key={project.id} {...project} />;
             })}
         </SimpleGrid>
     );

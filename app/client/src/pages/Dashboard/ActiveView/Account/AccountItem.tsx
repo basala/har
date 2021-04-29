@@ -176,7 +176,7 @@ const AccountItem: FC<AccountItemProps> = props => {
                 position: 'top',
             });
         } else {
-            // onDeleteTipClose();
+            onDeleteTipClose();
             toast({
                 description: '删除成功',
                 status: 'success',

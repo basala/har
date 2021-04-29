@@ -65,7 +65,7 @@ const AccountViewer: FC<AccountViewerProps> = props => {
                 const { id, name, environment } = account;
 
                 return (
-                    <Box w="100%" px={4} py={2} key={index}>
+                    <Box w="100%" px={4} py={2} key={id}>
                         <AccountItem
                             id={id}
                             name={name}
