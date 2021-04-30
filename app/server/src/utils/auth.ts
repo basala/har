@@ -5,7 +5,10 @@ import { get, isEmpty } from 'lodash';
 export async function generateToken(
     projectEnv: ProjectEnvironment,
     accountEnv: AccountEnvironment
-): Promise<string> {
+): Promise<{
+    token: string;
+    error?: string;
+}> {
     const { host, authUrl, authBody, tokenPath } = projectEnv;
     const { username, password } = accountEnv;
 
@@ -23,18 +26,26 @@ export async function generateToken(
             const token = get(response.data, JSON.parse(tokenPath));
 
             if (isEmpty(token)) {
-                throw new Error(
-                    '校验失败, 请检查账号密码是否正确或者工程配置是否正确'
-                );
+                return {
+                    token: '',
+                    error:
+                        '校验失败, 请检查账号密码是否正确或者工程配置是否正确',
+                };
             }
 
-            return token;
+            return {
+                token,
+            };
         } else {
-            throw new Error(
-                '校验失败, 请检查账号密码是否正确或者工程配置是否正确'
-            );
+            return {
+                token: '',
+                error: '校验失败, 请检查账号密码是否正确或者工程配置是否正确',
+            };
         }
     } catch (error) {
-        throw new Error(error);
+        return {
+            token: '',
+            error: error.message,
+        };
     }
 }

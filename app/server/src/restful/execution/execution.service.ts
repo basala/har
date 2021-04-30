@@ -11,17 +11,91 @@ import {
     Logger,
 } from '@nestjs/common';
 import axios from 'axios';
-import { every, get, isEqual, map } from 'lodash';
+import { every, flatten, get, isEqual, map } from 'lodash';
 import { generateToken } from 'src/utils/auth';
 import { getMongoRepository } from 'typeorm';
 
 @Injectable()
 export class ExecutionService {
-    async executeProject(id: string) {
-        return 'project' + id;
+    async executeProject(
+        id: string
+    ): Promise<
+        {
+            success: boolean;
+            error?: string;
+        }[]
+    > {
+        const project = await getMongoRepository(ProjectEntity).findOne({
+            select: ['environment'],
+            where: {
+                _id: id,
+            },
+        });
+
+        if (!project) {
+            throw new ForbiddenException('project does not exist');
+        }
+
+        const accounts = await getMongoRepository(AccountEntity).find({
+            select: ['id', 'environment'],
+            where: {
+                projectId: id,
+            },
+        });
+
+        return flatten(
+            await Promise.all(
+                map(accounts, async account => {
+                    const token = await generateToken(
+                        project.environment,
+                        account.environment
+                    );
+
+                    if (token.error) {
+                        return [
+                            {
+                                success: false,
+                                error: token.error,
+                            },
+                        ];
+                    }
+
+                    const issues = await getMongoRepository(IssueEntity).find({
+                        select: [
+                            'url',
+                            'method',
+                            'postData',
+                            'content',
+                            'fields',
+                            'id',
+                        ],
+                        where: {
+                            accountId: account.id,
+                        },
+                    });
+
+                    return await Promise.all(
+                        map(issues, async issue => {
+                            return this.executeSingle(
+                                project.environment,
+                                issue,
+                                token.token
+                            );
+                        })
+                    );
+                })
+            )
+        );
     }
 
-    async executeAccount(id: string) {
+    async executeAccount(
+        id: string
+    ): Promise<
+        {
+            success: boolean;
+            error?: string;
+        }[]
+    > {
         const account = await getMongoRepository(AccountEntity).findOne({
             select: ['environment', 'projectId'],
             where: {
@@ -47,9 +121,11 @@ export class ExecutionService {
         const token = await generateToken(
             project.environment,
             account.environment
-        ).catch((error: Error) => {
-            throw new BadRequestException(error.message);
-        });
+        );
+
+        if (token.error) {
+            throw new BadRequestException(token.error);
+        }
 
         const issues = await getMongoRepository(IssueEntity).find({
             select: ['url', 'method', 'postData', 'content', 'fields', 'id'],
@@ -60,7 +136,11 @@ export class ExecutionService {
 
         return await Promise.all(
             map(issues, async issue => {
-                return this.executeSingle(project.environment, issue, token);
+                return this.executeSingle(
+                    project.environment,
+                    issue,
+                    token.token
+                );
             })
         );
     }
@@ -69,6 +149,7 @@ export class ExecutionService {
         id: string
     ): Promise<{
         success: boolean;
+        error?: string;
     }> {
         const issue = await getMongoRepository(IssueEntity).findOne({
             select: [
@@ -113,11 +194,17 @@ export class ExecutionService {
         const token = await generateToken(
             project.environment,
             account.environment
-        ).catch((error: Error) => {
-            throw new BadRequestException(error.message);
-        });
+        );
 
-        return await this.executeSingle(project.environment, issue, token);
+        if (token.error) {
+            throw new BadRequestException(token.error);
+        }
+
+        return await this.executeSingle(
+            project.environment,
+            issue,
+            token.token
+        );
     }
 
     /**
@@ -133,7 +220,7 @@ export class ExecutionService {
         token: string
     ): Promise<{
         success: boolean;
-        error?: Error;
+        error?: string;
     }> {
         const { pathname, search } = new URL(issue.url);
         try {
@@ -167,7 +254,7 @@ export class ExecutionService {
             );
             return {
                 success: false,
-                error: error,
+                error: error.message,
             };
         }
     }

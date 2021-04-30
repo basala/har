@@ -16,10 +16,12 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import _ from 'lodash';
 import React, { FC } from 'react';
-import { FcFile, FcFolder, FcPlus } from 'react-icons/fc';
+import { FcFile, FcFolder, FcParallelTasks, FcPlus } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
+import { RemoteUrl } from '../../../../config/apollo';
 import { RoutePath, useUrlPath } from '../../../../hooks/url';
 import AccountViewer from './AccountViewer';
 import AccountModal, { AccountParams } from './modal/AccountModal';
@@ -220,6 +222,27 @@ const AccountContainer: FC = () => {
         }
     };
 
+    const [executeLoading, setExecuteLoading] = React.useState(false);
+    const executeAccount = React.useCallback(async () => {
+        setExecuteLoading(true);
+
+        await axios
+            .post<{
+                valid: boolean;
+            }>(`${RemoteUrl}/execute/${projectId}`, {
+                type: 1,
+            })
+            .catch(error => {
+                return {
+                    data: {
+                        valid: false,
+                    },
+                };
+            });
+
+        setExecuteLoading(false);
+    }, [projectId]);
+
     return (
         <Flex direction="column" h="100%">
             <HStack h="4rem" justify="space-between">
@@ -236,6 +259,15 @@ const AccountContainer: FC = () => {
                     </BreadcrumbItem>
                 </Breadcrumb>
                 <Box>
+                    <Button
+                        colorScheme="pink"
+                        leftIcon={<Icon as={FcParallelTasks} boxSize={6} />}
+                        onClick={executeAccount}
+                        isLoading={executeLoading}
+                        mr="1rem"
+                    >
+                        执行全部
+                    </Button>
                     <Menu>
                         <MenuButton
                             as={Button}

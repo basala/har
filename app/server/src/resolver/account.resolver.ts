@@ -51,7 +51,7 @@ export class AccountResolver {
         });
 
         if (existedProject) {
-            throw new ForbiddenError('Project already exists.');
+            throw new ForbiddenError('Account already exists.');
         }
 
         const createAccount = await getMongoRepository(AccountEntity).save(
