@@ -7,6 +7,7 @@ import {
     Badge,
     Box,
     Checkbox,
+    CheckboxGroup,
     Editable,
     EditableInput,
     EditablePreview,
@@ -23,14 +24,20 @@ import { HarResult } from './IssueUploadModal';
 
 interface IssueUploadItemProps {
     har: HarResult;
+    checked: boolean;
     onChange: (selected: boolean) => void;
     onNameChange: (name: string) => void;
-    onFieldChange: (fieldName: string, selected: boolean) => void;
+    onFieldChange: (value: string[]) => void;
 }
 
 const IssueUploadItem: FC<IssueUploadItemProps> = props => {
-    const { har } = props;
-    const isChecked = har.selected || false;
+    const { har, checked } = props;
+    const [isChecked, setChecked] = React.useState(checked);
+
+    React.useEffect(() => {
+        setChecked(checked);
+    }, [checked]);
+
     const content = JSON.parse(har.content);
     const resolvable =
         _.isPlainObject(content.data) && _.keys(content.data).length > 0;
@@ -47,13 +54,14 @@ const IssueUploadItem: FC<IssueUploadItemProps> = props => {
                 <Checkbox
                     isChecked={isChecked}
                     onChange={event => {
+                        setChecked(event.target.checked);
                         props.onChange(event.target.checked);
                     }}
                 />
                 <Icon as={FcVideoFile} fontSize={25} />
                 <Badge colorScheme="pink">{har.method}</Badge>
                 <Editable
-                    defaultValue={har.name}
+                    defaultValue={har.url}
                     w="1rem"
                     flex="1"
                     onSubmit={props.onNameChange}
@@ -72,43 +80,53 @@ const IssueUploadItem: FC<IssueUploadItemProps> = props => {
                     <AccordionItem>
                         <AccordionButton>
                             <Box flex="1" textAlign="left">
-                                需要匹配的字段(目前只支持data字段)
+                                需要匹配的字段(目前只支持data字段,
+                                未勾选代表比较整个data)
                             </Box>
                             <AccordionIcon />
                         </AccordionButton>
                         <AccordionPanel>
-                            <SimpleGrid columns={5}>
-                                {_.map(_.keys(content.data), (key, index) => {
-                                    return (
-                                        <HStack
-                                            key={index}
-                                            spacing={1}
-                                            h="2rem"
-                                        >
-                                            <Checkbox
-                                                isChecked={_.includes(
-                                                    har.fields,
-                                                    `data.${key}`
-                                                )}
-                                                onChange={event => {
-                                                    props.onFieldChange(
-                                                        `data.${key}`,
-                                                        event.target.checked
-                                                    );
-                                                }}
-                                            ></Checkbox>
-                                            <Text
-                                                flex="1"
-                                                whiteSpace="nowrap"
-                                                overflow="hidden"
-                                                textOverflow="ellipsis"
-                                            >
-                                                {key}
-                                            </Text>
-                                        </HStack>
+                            <CheckboxGroup
+                                defaultValue={_.map(
+                                    _.keys(content.data),
+                                    key => {
+                                        return `data.${key}`;
+                                    }
+                                )}
+                                onChange={(value: string[]) => {
+                                    props.onFieldChange(
+                                        _.isEmpty(value) ? ['data'] : value
                                     );
-                                })}
-                            </SimpleGrid>
+                                }}
+                            >
+                                <SimpleGrid columns={5}>
+                                    {_.map(
+                                        _.keys(content.data),
+                                        (key, index) => {
+                                            return (
+                                                <HStack
+                                                    key={index}
+                                                    spacing={1}
+                                                    h="2rem"
+                                                >
+                                                    <Checkbox
+                                                        defaultChecked
+                                                        value={`data.${key}`}
+                                                    ></Checkbox>
+                                                    <Text
+                                                        flex="1"
+                                                        whiteSpace="nowrap"
+                                                        overflow="hidden"
+                                                        textOverflow="ellipsis"
+                                                    >
+                                                        {key}
+                                                    </Text>
+                                                </HStack>
+                                            );
+                                        }
+                                    )}
+                                </SimpleGrid>
+                            </CheckboxGroup>
                         </AccordionPanel>
                     </AccordionItem>
                 </Accordion>

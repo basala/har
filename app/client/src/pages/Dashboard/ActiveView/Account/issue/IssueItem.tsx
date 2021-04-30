@@ -33,16 +33,14 @@ export function createActionButton(
     loading = false
 ) {
     return (
-        <Tooltip label={label}>
-            <IconButton
-                icon={icon}
-                aria-label={label}
-                isRound
-                isLoading={loading}
-                fontSize={20}
-                onClick={onClick}
-            />
-        </Tooltip>
+        <IconButton
+            icon={icon}
+            aria-label={label}
+            isRound
+            isLoading={loading}
+            fontSize={20}
+            onClick={onClick}
+        />
     );
 }
 
@@ -245,7 +243,7 @@ const IssueItem: FC<IssueItemProps> = props => {
             >
                 {name}
             </Text>
-            <Tooltip label={pathname + search}>
+            <Tooltip label={pathname + search} openDelay={500}>
                 <Code
                     px={2}
                     w="20rem"

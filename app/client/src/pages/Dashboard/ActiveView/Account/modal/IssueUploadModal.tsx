@@ -26,10 +26,26 @@ import { QUERY_ACCOUNT } from '../../../../../query/account';
 import { AccountParams } from './AccountModal';
 import IssueUploadItem from './IssueUploadItem';
 
+export interface HarResult {
+    url: string;
+    method: Method;
+    content: string;
+    postData: string;
+}
+
+export interface MemoizedHarResult extends HarResult {
+    name: string;
+    fields: string[];
+    selected: boolean;
+}
+
 interface IssueUploadModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (input: { hars: HarResult[]; position: string }) => void;
+    onConfirm: (input: {
+        hars: Omit<MemoizedHarResult, 'selected'>[];
+        position: string;
+    }) => void;
     loading: boolean;
 }
 
@@ -42,16 +58,6 @@ interface HarEntry extends Entry {
         | 'script'
         | 'font'
         | 'stylesheet';
-}
-
-export interface HarResult {
-    name: string;
-    url: string;
-    method: Method;
-    content: string;
-    postData: string;
-    fields: string[];
-    selected?: boolean;
 }
 
 function dealWithHarLists(inputs: string[]) {
@@ -74,25 +80,14 @@ function dealWithHarLists(inputs: string[]) {
                     })
                     .map(entry => {
                         const { request, response } = entry;
-                        const content =
-                            response.content.text || JSON.stringify('');
-                        const data = JSON.parse(content);
-                        const resolvable =
-                            _.isPlainObject(data.data) &&
-                            _.keys(data.data).length > 0;
 
                         return {
-                            name: request.url,
                             url: request.url,
                             method: request.method.toUpperCase() as Method,
-                            content,
+                            content:
+                                response.content.text || JSON.stringify(''),
                             postData:
                                 request.postData?.text || JSON.stringify(''),
-                            fields: resolvable
-                                ? _.map(data.data, (value, key) => {
-                                      return `data.${key}`;
-                                  })
-                                : ['data'],
                         };
                     }),
             ];
@@ -104,6 +99,9 @@ function dealWithHarLists(inputs: string[]) {
 const IssueUploadModal: FC<IssueUploadModalProps> = props => {
     const { isOpen, onClose, onConfirm, loading } = props;
     const [harLists, setHarLists] = React.useState<HarResult[]>([]);
+    const [memoizedHarLists, setMemoizedHarLists] = React.useState<
+        MemoizedHarResult[]
+    >([]);
     const [position, setPosition] = React.useState('');
     const [, projectId] = useUrlPath();
     const { data } = useQuery<
@@ -122,7 +120,30 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
             input: projectId,
         },
     });
+    const [allChecked, setAllChecked] = React.useState(false);
 
+    React.useEffect(() => {
+        setMemoizedHarLists(
+            _.map(harLists, har => {
+                const content = JSON.parse(har.content);
+                const resolvable =
+                    _.isPlainObject(content.data) &&
+                    _.keys(content.data).length > 0;
+
+                return {
+                    ...har,
+                    name: har.url,
+                    fields: resolvable
+                        ? _.map(content.data, (value, key) => {
+                              return `data.${key}`;
+                          })
+                        : ['data'],
+                    selected: false,
+                };
+            })
+        );
+        setAllChecked(false);
+    }, [harLists]);
     React.useEffect(() => {
         setHarLists([]);
         setPosition('');
@@ -211,64 +232,38 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                             <IssueUploadItem
                                                 key={index}
                                                 har={har}
+                                                checked={allChecked}
                                                 onChange={selected => {
-                                                    setHarLists(
-                                                        harLists.map(
-                                                            (har, idx) => {
-                                                                return {
-                                                                    ...har,
-                                                                    selected:
-                                                                        index ===
-                                                                        idx
-                                                                            ? selected
-                                                                            : har.selected,
-                                                                };
-                                                            }
-                                                        )
+                                                    const newValue = [
+                                                        ...memoizedHarLists,
+                                                    ];
+                                                    newValue[
+                                                        index
+                                                    ].selected = selected;
+                                                    setMemoizedHarLists(
+                                                        newValue
                                                     );
                                                 }}
                                                 onNameChange={name => {
-                                                    setHarLists(
-                                                        harLists.map(
-                                                            (har, idx) => {
-                                                                return {
-                                                                    ...har,
-                                                                    name:
-                                                                        index ===
-                                                                        idx
-                                                                            ? name
-                                                                            : har.name,
-                                                                };
-                                                            }
-                                                        )
+                                                    const newValue = [
+                                                        ...memoizedHarLists,
+                                                    ];
+                                                    newValue[index].name = name;
+                                                    setMemoizedHarLists(
+                                                        newValue
                                                     );
                                                 }}
                                                 onFieldChange={(
-                                                    fieldName,
-                                                    selected
+                                                    fields: string[]
                                                 ) => {
-                                                    setHarLists(
-                                                        harLists.map(
-                                                            (har, idx) => {
-                                                                return {
-                                                                    ...har,
-                                                                    fields:
-                                                                        index ===
-                                                                        idx
-                                                                            ? selected
-                                                                                ? [
-                                                                                      ...har.fields,
-                                                                                      fieldName,
-                                                                                  ]
-                                                                                : har.fields.filter(
-                                                                                      value =>
-                                                                                          value !==
-                                                                                          fieldName
-                                                                                  )
-                                                                            : har.fields,
-                                                                };
-                                                            }
-                                                        )
+                                                    const newValue = [
+                                                        ...memoizedHarLists,
+                                                    ];
+                                                    newValue[
+                                                        index
+                                                    ].fields = fields;
+                                                    setMemoizedHarLists(
+                                                        newValue
                                                     );
                                                 }}
                                             />
@@ -279,8 +274,9 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                     <Button
                                         colorScheme="blue"
                                         onClick={() => {
-                                            setHarLists(
-                                                harLists.map(har => {
+                                            setAllChecked(true);
+                                            setMemoizedHarLists(
+                                                memoizedHarLists.map(har => {
                                                     return {
                                                         ...har,
                                                         selected: true,
@@ -293,8 +289,9 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            setHarLists(
-                                                harLists.map(har => {
+                                            setAllChecked(false);
+                                            setMemoizedHarLists(
+                                                memoizedHarLists.map(har => {
                                                     return {
                                                         ...har,
                                                         selected: false,
@@ -350,25 +347,22 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                     <Button
                         colorScheme="blue"
                         disabled={
-                            _.size(harLists.filter(har => har.selected)) ===
-                                0 ||
+                            _.size(
+                                memoizedHarLists.filter(har => har.selected)
+                            ) === 0 ||
                             _.isEmpty(position) ||
                             loading
                         }
                         isLoading={loading}
                         onClick={() => {
+                            console.log(1);
                             onConfirm({
-                                hars: harLists
+                                hars: memoizedHarLists
                                     .filter(har => har.selected)
                                     .map(har => {
-                                        return {
-                                            name: har.name,
-                                            url: har.url,
-                                            method: har.method,
-                                            content: har.content,
-                                            postData: har.postData,
-                                            fields: har.fields,
-                                        };
+                                        const { selected, ...rest } = har;
+
+                                        return rest;
                                     }),
                                 position,
                             });

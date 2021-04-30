@@ -23,7 +23,7 @@ import { Link } from 'react-router-dom';
 import { RoutePath, useUrlPath } from '../../../../hooks/url';
 import AccountViewer from './AccountViewer';
 import AccountModal, { AccountParams } from './modal/AccountModal';
-import IssueUploadModal, { HarResult } from './modal/IssueUploadModal';
+import IssueUploadModal, { MemoizedHarResult } from './modal/IssueUploadModal';
 
 function parseInputId(storeFieldName: string) {
     return storeFieldName.match(/"input":"(.*)"/)?.[1];
@@ -102,7 +102,7 @@ const AccountContainer: FC = () => {
             }[];
         },
         {
-            hars: Omit<HarResult, 'selected'>[];
+            hars: Omit<MemoizedHarResult, 'selected'>[];
             position: string;
         }
     >(ADD_ISSUES, {
@@ -180,7 +180,7 @@ const AccountContainer: FC = () => {
         hars,
         position,
     }: {
-        hars: HarResult[];
+        hars: Omit<MemoizedHarResult, 'selected'>[];
         position: string;
     }) => {
         if (!projectId) {

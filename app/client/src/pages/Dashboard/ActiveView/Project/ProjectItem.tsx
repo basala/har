@@ -196,7 +196,11 @@ const ProjectItem: FC<ProjectItemProps> = props => {
         >
             <LinkBox h="100%">
                 <Box position="absolute" inset="0">
-                    <Tooltip label={name} placement="auto-start">
+                    <Tooltip
+                        label={name}
+                        placement="auto-start"
+                        openDelay={500}
+                    >
                         <LinkOverlay
                             as={Link}
                             to={`/project/${id}`}
