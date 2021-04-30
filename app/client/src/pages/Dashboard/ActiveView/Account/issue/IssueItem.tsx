@@ -16,7 +16,6 @@ import {
     Icon,
     IconButton,
     Text,
-    Tooltip,
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
@@ -243,17 +242,16 @@ const IssueItem: FC<IssueItemProps> = props => {
             >
                 {name}
             </Text>
-            <Tooltip label={pathname + search} openDelay={500}>
-                <Code
-                    px={2}
-                    w="20rem"
-                    whiteSpace="nowrap"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                >
-                    {pathname + search}
-                </Code>
-            </Tooltip>
+            <Code
+                px={2}
+                w="20rem"
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                title={pathname + search}
+            >
+                {pathname + search}
+            </Code>
             <ButtonGroup w="10rem">
                 {createActionButton(
                     <FcStart />,
