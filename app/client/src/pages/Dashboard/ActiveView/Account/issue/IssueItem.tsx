@@ -20,8 +20,16 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import axios, { Method } from 'axios';
+import _ from 'lodash';
 import React, { FC } from 'react';
-import { FcEditImage, FcFullTrash, FcStart, FcVideoFile } from 'react-icons/fc';
+import {
+    FcCancel,
+    FcEditImage,
+    FcFullTrash,
+    FcOk,
+    FcStart,
+    FcVideoFile,
+} from 'react-icons/fc';
 import { RemoteUrl } from '../../../../../config/apollo';
 import IssueModal from './IssueModal';
 
@@ -50,8 +58,24 @@ export interface Issue {
     method: Method;
 }
 
+export interface ExecutionResult {
+    success: boolean;
+    data: {
+        refer: any;
+        actual: any;
+        id: string;
+    };
+    error?: string;
+}
+
+export interface ExecutionResultMap {
+    [key: string]: ExecutionResult;
+}
+
 interface IssueItemProps {
     issue: Issue;
+    executionLists: ExecutionResultMap;
+    setExecutionLists: React.Dispatch<React.SetStateAction<ExecutionResultMap>>;
 }
 
 interface UpdateIssueInput {
@@ -78,6 +102,7 @@ const DELETE_ISSUE = gql`
 const IssueItem: FC<IssueItemProps> = props => {
     const {
         issue: { name, url, method, id },
+        executionLists,
     } = props;
     const { pathname, search } = new URL(url);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -198,25 +223,36 @@ const IssueItem: FC<IssueItemProps> = props => {
     };
 
     const [executeLoading, setExecuteLoading] = React.useState(false);
-    const executeIssue = React.useCallback(async () => {
+    const executeIssue = async () => {
         setExecuteLoading(true);
 
-        await axios
-            .post<{
-                valid: boolean;
-            }>(`${RemoteUrl}/execute/${id}`, {
+        const response = await axios
+            .post<ExecutionResult[]>(`${RemoteUrl}/execute/${id}`, {
                 type: 3,
             })
             .catch(error => {
+                console.log(error);
+                toast({
+                    description: '执行失败',
+                    position: 'top',
+                    status: 'error',
+                });
                 return {
-                    data: {
-                        valid: false,
-                    },
+                    data: [],
                 };
             });
 
+        const map: ExecutionResultMap = {};
+        _.each(response.data, res => {
+            map[res.data.id] = res;
+        });
+        props.setExecutionLists({
+            ...props.executionLists,
+            ...map,
+        });
+
         setExecuteLoading(false);
-    }, [id]);
+    };
 
     return (
         <HStack
@@ -228,8 +264,24 @@ const IssueItem: FC<IssueItemProps> = props => {
             boxShadow="md"
             borderTopLeftRadius="4rem"
             borderBottomLeftRadius="4rem"
+            bg={
+                executionLists[id]
+                    ? executionLists[id].success
+                        ? 'teal.50'
+                        : 'red.50'
+                    : ''
+            }
         >
-            <Icon as={FcVideoFile} fontSize={25} />
+            <Icon
+                as={
+                    executionLists[id]
+                        ? executionLists[id].success
+                            ? FcOk
+                            : FcCancel
+                        : FcVideoFile
+                }
+                fontSize={25}
+            />
             <Box w="3rem">
                 <Badge colorScheme="pink">{method}</Badge>
             </Box>

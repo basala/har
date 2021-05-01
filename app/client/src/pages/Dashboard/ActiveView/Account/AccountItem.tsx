@@ -32,13 +32,19 @@ import {
 } from 'react-icons/fc';
 import { RemoteUrl } from '../../../../config/apollo';
 import IssueContainer from './issue/IssueContainer';
-import { createActionButton } from './issue/IssueItem';
+import {
+    createActionButton,
+    ExecutionResult,
+    ExecutionResultMap,
+} from './issue/IssueItem';
 import AccountModal, { AccountParams } from './modal/AccountModal';
 
 interface AccountItemProps {
     id: string;
     name: string;
     environment: AccountParams;
+    executionLists: ExecutionResultMap;
+    setExecutionLists: React.Dispatch<React.SetStateAction<ExecutionResultMap>>;
 }
 
 const UPDATE_ACCOUNT = gql`
@@ -188,25 +194,36 @@ const AccountItem: FC<AccountItemProps> = props => {
     };
 
     const [executeLoading, setExecuteLoading] = React.useState(false);
-    const executeAccount = React.useCallback(async () => {
+    const executeAccount = async () => {
         setExecuteLoading(true);
 
-        await axios
-            .post<{
-                valid: boolean;
-            }>(`${RemoteUrl}/execute/${id}`, {
+        const response = await axios
+            .post<ExecutionResult[]>(`${RemoteUrl}/execute/${id}`, {
                 type: 2,
             })
             .catch(error => {
+                console.log(error);
+                toast({
+                    description: '执行失败',
+                    position: 'top',
+                    status: 'error',
+                });
                 return {
-                    data: {
-                        valid: false,
-                    },
+                    data: [],
                 };
             });
 
+        const map: ExecutionResultMap = {};
+        _.each(response.data, res => {
+            map[res.data.id] = res;
+        });
+        props.setExecutionLists({
+            ...props.executionLists,
+            ...map,
+        });
+
         setExecuteLoading(false);
-    }, [id]);
+    };
 
     return (
         <Accordion allowToggle>
@@ -309,7 +326,13 @@ const AccountItem: FC<AccountItemProps> = props => {
                             </AccordionButton>
                             <AccordionPanel>
                                 {isExpanded ? (
-                                    <IssueContainer id={id} />
+                                    <IssueContainer
+                                        id={id}
+                                        executionLists={props.executionLists}
+                                        setExecutionLists={
+                                            props.setExecutionLists
+                                        }
+                                    />
                                 ) : (
                                     <></>
                                 )}

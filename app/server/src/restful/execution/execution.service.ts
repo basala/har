@@ -3,6 +3,7 @@ import {
     IssueEntity,
     ProjectEntity,
     ProjectEnvironment,
+    RequestType,
 } from '@entity';
 import {
     BadRequestException,
@@ -11,22 +12,32 @@ import {
     Logger,
 } from '@nestjs/common';
 import axios from 'axios';
-import { every, flatten, get, isEqual, map } from 'lodash';
+import { flatten, isEqual, map, pick } from 'lodash';
 import { generateToken } from 'src/utils/auth';
 import { getMongoRepository } from 'typeorm';
 
+export interface ExecutionResponse {
+    success: boolean;
+    data: {
+        refer: any;
+        actual: any;
+        id: string;
+        name: string;
+        url: string;
+        method: RequestType;
+        accountId: string;
+        accountName: string;
+        projectId: string;
+        projectName: string;
+    };
+    error?: string;
+}
+
 @Injectable()
 export class ExecutionService {
-    async executeProject(
-        id: string
-    ): Promise<
-        {
-            success: boolean;
-            error?: string;
-        }[]
-    > {
+    async executeProject(id: string): Promise<ExecutionResponse[]> {
         const project = await getMongoRepository(ProjectEntity).findOne({
-            select: ['environment'],
+            select: ['environment', 'name'],
             where: {
                 _id: id,
             },
@@ -37,7 +48,7 @@ export class ExecutionService {
         }
 
         const accounts = await getMongoRepository(AccountEntity).find({
-            select: ['id', 'environment'],
+            select: ['id', 'environment', 'name'],
             where: {
                 projectId: id,
             },
@@ -51,15 +62,6 @@ export class ExecutionService {
                         account.environment
                     );
 
-                    if (token.error) {
-                        return [
-                            {
-                                success: false,
-                                error: token.error,
-                            },
-                        ];
-                    }
-
                     const issues = await getMongoRepository(IssueEntity).find({
                         select: [
                             'url',
@@ -68,19 +70,56 @@ export class ExecutionService {
                             'content',
                             'fields',
                             'id',
+                            'name',
                         ],
                         where: {
                             accountId: account.id,
                         },
                     });
 
+                    if (token.error) {
+                        return map(issues, issue => {
+                            return {
+                                success: false,
+                                error: token.error,
+                                data: {
+                                    refer: '',
+                                    actual: '',
+                                    id: issue.id,
+                                    name: issue.name,
+                                    url: issue.url,
+                                    method: issue.method,
+                                    accountId: account.id,
+                                    accountName: account.name,
+                                    projectId: id,
+                                    projectName: project.name,
+                                },
+                            };
+                        });
+                    }
+
                     return await Promise.all(
                         map(issues, async issue => {
-                            return this.executeSingle(
+                            const res = await this.executeSingle(
                                 project.environment,
                                 issue,
                                 token.token
                             );
+
+                            return {
+                                ...res,
+                                data: {
+                                    ...res.data,
+                                    id: issue.id,
+                                    name: issue.name,
+                                    url: issue.url,
+                                    method: issue.method,
+                                    accountId: account.id,
+                                    accountName: account.name,
+                                    projectId: id,
+                                    projectName: project.name,
+                                },
+                            };
                         })
                     );
                 })
@@ -88,16 +127,9 @@ export class ExecutionService {
         );
     }
 
-    async executeAccount(
-        id: string
-    ): Promise<
-        {
-            success: boolean;
-            error?: string;
-        }[]
-    > {
+    async executeAccount(id: string): Promise<ExecutionResponse[]> {
         const account = await getMongoRepository(AccountEntity).findOne({
-            select: ['environment', 'projectId'],
+            select: ['environment', 'projectId', 'name'],
             where: {
                 _id: id,
             },
@@ -108,7 +140,7 @@ export class ExecutionService {
         }
 
         const project = await getMongoRepository(ProjectEntity).findOne({
-            select: ['environment'],
+            select: ['environment', 'id', 'name'],
             where: {
                 _id: account.projectId,
             },
@@ -128,7 +160,15 @@ export class ExecutionService {
         }
 
         const issues = await getMongoRepository(IssueEntity).find({
-            select: ['url', 'method', 'postData', 'content', 'fields', 'id'],
+            select: [
+                'url',
+                'method',
+                'postData',
+                'content',
+                'fields',
+                'id',
+                'name',
+            ],
             where: {
                 accountId: account.id,
             },
@@ -136,21 +176,31 @@ export class ExecutionService {
 
         return await Promise.all(
             map(issues, async issue => {
-                return this.executeSingle(
+                const res = await this.executeSingle(
                     project.environment,
                     issue,
                     token.token
                 );
+
+                return {
+                    ...res,
+                    data: {
+                        ...res.data,
+                        id: issue.id,
+                        name: issue.name,
+                        url: issue.url,
+                        method: issue.method,
+                        accountId: id,
+                        accountName: account.name,
+                        projectId: project.id,
+                        projectName: project.name,
+                    },
+                };
             })
         );
     }
 
-    async executeIssue(
-        id: string
-    ): Promise<{
-        success: boolean;
-        error?: string;
-    }> {
+    async executeIssue(id: string): Promise<ExecutionResponse[]> {
         const issue = await getMongoRepository(IssueEntity).findOne({
             select: [
                 'url',
@@ -159,6 +209,7 @@ export class ExecutionService {
                 'content',
                 'accountId',
                 'fields',
+                'name',
             ],
             where: {
                 _id: id,
@@ -170,7 +221,7 @@ export class ExecutionService {
         }
 
         const account = await getMongoRepository(AccountEntity).findOne({
-            select: ['environment', 'projectId'],
+            select: ['environment', 'projectId', 'name', 'id'],
             where: {
                 _id: issue.accountId,
             },
@@ -181,7 +232,7 @@ export class ExecutionService {
         }
 
         const project = await getMongoRepository(ProjectEntity).findOne({
-            select: ['environment'],
+            select: ['environment', 'id', 'name'],
             where: {
                 _id: account.projectId,
             },
@@ -200,11 +251,28 @@ export class ExecutionService {
             throw new BadRequestException(token.error);
         }
 
-        return await this.executeSingle(
+        const res = await this.executeSingle(
             project.environment,
             issue,
             token.token
         );
+
+        return [
+            {
+                ...res,
+                data: {
+                    ...res.data,
+                    id,
+                    name: issue.name,
+                    url: issue.url,
+                    method: issue.method,
+                    accountId: account.id,
+                    accountName: account.name,
+                    projectId: project.id,
+                    projectName: project.name,
+                },
+            },
+        ];
     }
 
     /**
@@ -220,11 +288,15 @@ export class ExecutionService {
         token: string
     ): Promise<{
         success: boolean;
+        data?: {
+            refer: any;
+            actual: any;
+        };
         error?: string;
     }> {
         const { pathname, search } = new URL(issue.url);
         try {
-            Logger.log(`Checking ${pathname + search} start`, 'Execution');
+            // Logger.log(`Checking ${pathname + search} start`, 'Execution');
             const response = await axios({
                 url: pathname + search,
                 baseURL: projectEnv.host,
@@ -237,14 +309,16 @@ export class ExecutionService {
                 throw new Error(error.message);
             });
             const content = JSON.parse(issue.content.toString());
+            const refer = pick(content, issue.fields);
+            const actual = pick(response.data, issue.fields);
 
-            const allMatched = every(issue.fields, field => {
-                return isEqual(get(response.data, field), get(content, field));
-            });
-
-            Logger.log(`Check ${pathname + search} finished`, 'Execution');
+            // Logger.log(`Check ${pathname + search} finished`, 'Execution');
             return {
-                success: allMatched,
+                success: isEqual(refer, actual),
+                data: {
+                    refer,
+                    actual,
+                },
             };
         } catch (error) {
             Logger.error(

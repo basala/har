@@ -7,7 +7,7 @@ import {
     ValidationPipe,
 } from '@nestjs/common';
 import { ExecutionDto, ExecutionType } from './execution.dto';
-import { ExecutionService } from './execution.service';
+import { ExecutionResponse, ExecutionService } from './execution.service';
 
 @Controller('execute')
 @UsePipes(ValidationPipe)
@@ -18,7 +18,7 @@ export class ExecutionController {
     async execute(@Param('id') id: string, @Body() config: ExecutionDto) {
         const { type, noticeId } = config;
 
-        let response;
+        let response: ExecutionResponse[];
         switch (type) {
             case ExecutionType.Project:
                 response = await this.executionService.executeProject(id);
@@ -32,12 +32,6 @@ export class ExecutionController {
             default:
         }
 
-        if (noticeId) {
-            console.log(noticeId);
-        }
-
-        return {
-            data: response,
-        };
+        return response;
     }
 }

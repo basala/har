@@ -4,10 +4,12 @@ import _ from 'lodash';
 import React, { FC } from 'react';
 import { FcExpired, FcHighPriority } from 'react-icons/fc';
 import EmptyPane from '../../../../../components/Exception/EmptyPane';
-import IssueItem, { Issue } from './IssueItem';
+import IssueItem, { ExecutionResultMap, Issue } from './IssueItem';
 
 interface IssueContainerProps {
     id: string;
+    executionLists: ExecutionResultMap;
+    setExecutionLists: React.Dispatch<React.SetStateAction<ExecutionResultMap>>;
 }
 
 const QUERY_ISSUE = gql`
@@ -81,7 +83,11 @@ const IssueContainer: FC<IssueContainerProps> = props => {
             {_.map(data?.findAllIssues, (issue, index) => {
                 return (
                     <Box key={issue.id} pl={4}>
-                        <IssueItem issue={issue} />
+                        <IssueItem
+                            issue={issue}
+                            executionLists={props.executionLists}
+                            setExecutionLists={props.setExecutionLists}
+                        />
                     </Box>
                 );
             })}

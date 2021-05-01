@@ -8,11 +8,14 @@ import CatLoading from '../../../../components/Loading/CatLoading';
 import { useUrlPath } from '../../../../hooks/url';
 import { QUERY_ACCOUNT } from '../../../../query/account';
 import AccountItem from './AccountItem';
+import { ExecutionResultMap } from './issue/IssueItem';
 import { AccountParams } from './modal/AccountModal';
 
 interface AccountViewerProps {
     isAdding: boolean;
     setAdding: React.Dispatch<React.SetStateAction<boolean>>;
+    executionLists: ExecutionResultMap;
+    setExecutionLists: React.Dispatch<React.SetStateAction<ExecutionResultMap>>;
 }
 
 const AccountViewer: FC<AccountViewerProps> = props => {
@@ -70,6 +73,8 @@ const AccountViewer: FC<AccountViewerProps> = props => {
                             id={id}
                             name={name}
                             environment={environment}
+                            executionLists={props.executionLists}
+                            setExecutionLists={props.setExecutionLists}
                         />
                     </Box>
                 );

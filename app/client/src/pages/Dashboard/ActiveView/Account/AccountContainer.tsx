@@ -24,6 +24,7 @@ import { Link } from 'react-router-dom';
 import { RemoteUrl } from '../../../../config/apollo';
 import { RoutePath, useUrlPath } from '../../../../hooks/url';
 import AccountViewer from './AccountViewer';
+import { ExecutionResult, ExecutionResultMap } from './issue/IssueItem';
 import AccountModal, { AccountParams } from './modal/AccountModal';
 import IssueUploadModal, { MemoizedHarResult } from './modal/IssueUploadModal';
 
@@ -222,26 +223,42 @@ const AccountContainer: FC = () => {
         }
     };
 
+    const [
+        executionLists,
+        setExecutionLists,
+    ] = React.useState<ExecutionResultMap>({});
     const [executeLoading, setExecuteLoading] = React.useState(false);
-    const executeAccount = React.useCallback(async () => {
+    const executeAccount = async () => {
         setExecuteLoading(true);
 
-        await axios
-            .post<{
-                valid: boolean;
-            }>(`${RemoteUrl}/execute/${projectId}`, {
+        const response = await axios
+            .post<ExecutionResult[]>(`${RemoteUrl}/execute/${projectId}`, {
                 type: 1,
             })
             .catch(error => {
+                console.log(error);
+                toast({
+                    description: '执行失败',
+                    position: 'top',
+                    status: 'error',
+                });
                 return {
-                    data: {
-                        valid: false,
-                    },
+                    data: [],
                 };
             });
 
+        const map: ExecutionResultMap = {};
+        _.each(response.data, res => {
+            map[res.data.id] = res;
+        });
+        setExecutionLists({
+            ...executionLists,
+            ...map,
+        });
+
         setExecuteLoading(false);
-    }, [projectId]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    };
 
     return (
         <Flex direction="column" h="100%">
@@ -311,7 +328,12 @@ const AccountContainer: FC = () => {
             </HStack>
             <Divider />
             <Box flex="1" overflow="auto" my={4}>
-                <AccountViewer isAdding={isAdding} setAdding={setAdding} />
+                <AccountViewer
+                    isAdding={isAdding}
+                    setAdding={setAdding}
+                    executionLists={executionLists}
+                    setExecutionLists={setExecutionLists}
+                />
             </Box>
         </Flex>
     );
