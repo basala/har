@@ -31,3 +31,25 @@ export class GQLAuthGuard extends AuthGuard('jwt') implements CanActivate {
         return true;
     }
 }
+
+@Injectable()
+export class RestAuthGuard extends AuthGuard('jwt') implements CanActivate {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        const req = context.switchToHttp().getRequest<Request | any>();
+        const authHeader = <string>req.headers.authorization;
+
+        if (!authHeader) {
+            throw new BadRequestException('Authorization header not found.');
+        }
+
+        const { data, info } = await authenticateJWT(req);
+
+        if (!data) {
+            throw new UnauthorizedException(info?.message);
+        }
+
+        req.user = data;
+
+        return true;
+    }
+}

@@ -1,3 +1,4 @@
+import { RestAuthGuard } from '@auth';
 import { ProjectEntity } from '@entity';
 import {
     BadRequestException,
@@ -5,6 +6,7 @@ import {
     Controller,
     ForbiddenException,
     Post,
+    UseGuards,
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common';
@@ -14,6 +16,7 @@ import { TestConnectionDto } from './account.dto';
 
 @Controller('account')
 @UsePipes(ValidationPipe)
+@UseGuards(RestAuthGuard)
 export class AccountController {
     @Post('connection')
     async testConnection(

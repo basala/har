@@ -1,8 +1,10 @@
+import { RestAuthGuard } from '@auth';
 import {
     Body,
     Controller,
     Param,
     Post,
+    UseGuards,
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common';
@@ -11,6 +13,7 @@ import { ExecutionResponse, ExecutionService } from './execution.service';
 
 @Controller('execute')
 @UsePipes(ValidationPipe)
+@UseGuards(RestAuthGuard)
 export class ExecutionController {
     constructor(private readonly executionService: ExecutionService) {}
 
