@@ -15,13 +15,16 @@ import {
     HStack,
     Icon,
     IconButton,
+    Link,
     Text,
     useDisclosure,
     useToast,
+    VStack,
 } from '@chakra-ui/react';
 import axios, { Method } from 'axios';
 import _ from 'lodash';
 import React, { FC } from 'react';
+import ReactDiffViewer from 'react-diff-viewer';
 import {
     FcCancel,
     FcEditImage,
@@ -254,99 +257,137 @@ const IssueItem: FC<IssueItemProps> = props => {
         setExecuteLoading(false);
     };
 
+    const isExecuted = !_.isEmpty(executionLists[id]);
+    const isPassed = executionLists[id]?.success;
+    const isError = !_.isEmpty(executionLists[id]?.error);
+
+    const [showError, setShowError] = React.useState(false);
+
     return (
-        <HStack
-            p={2}
-            pl={4}
+        <VStack
+            align="stretch"
             spacing={2}
-            h="4rem"
             borderWidth={1}
             boxShadow="md"
-            borderTopLeftRadius="4rem"
-            borderBottomLeftRadius="4rem"
-            bg={
-                executionLists[id]
-                    ? executionLists[id].success
-                        ? 'teal.50'
-                        : 'red.50'
-                    : ''
-            }
+            borderTopLeftRadius="2rem"
+            borderBottomLeftRadius="2rem"
+            bg={isExecuted ? (isPassed ? 'teal.50' : 'red.50') : ''}
         >
-            <Icon
-                as={
-                    executionLists[id]
-                        ? executionLists[id].success
-                            ? FcOk
-                            : FcCancel
-                        : FcVideoFile
-                }
-                fontSize={25}
-            />
-            <Box w="3rem">
-                <Badge colorScheme="pink">{method}</Badge>
-            </Box>
-            <Text
-                w="1rem"
-                flex="1"
-                whiteSpace="nowrap"
-                overflow="hidden"
-                textOverflow="ellipsis"
-            >
-                {name}
-            </Text>
-            <Code
-                px={2}
-                w="20rem"
-                whiteSpace="nowrap"
-                overflow="hidden"
-                textOverflow="ellipsis"
-                title={pathname + search}
-            >
-                {pathname + search}
-            </Code>
-            <ButtonGroup w="10rem">
-                {createActionButton(
-                    <FcStart />,
-                    '执行',
-                    executeIssue,
-                    executeLoading
-                )}
-                {createActionButton(<FcEditImage />, '编辑', onOpen)}
-                {createActionButton(<FcFullTrash />, '删除', onDeleteTipOpen)}
-                <IssueModal
-                    isOpen={isOpen}
-                    loading={updateLoading}
-                    onClose={onClose}
-                    onConfirm={onUpdate}
-                    name={name}
+            <HStack p={2} pl={4}>
+                <Icon
+                    as={isExecuted ? (isPassed ? FcOk : FcCancel) : FcVideoFile}
+                    fontSize={25}
                 />
-                <AlertDialog
-                    leastDestructiveRef={cancelRef}
-                    onClose={onDeleteTipClose}
-                    isOpen={isDeleteTipOpen}
+                <Box w="3rem">
+                    <Badge colorScheme="pink">{method}</Badge>
+                </Box>
+                <Text
+                    w="1rem"
+                    flex="1"
+                    whiteSpace="nowrap"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
                 >
-                    <AlertDialogOverlay />
-                    <AlertDialogContent>
-                        <AlertDialogHeader>w(ﾟДﾟ)w</AlertDialogHeader>
-                        <AlertDialogCloseButton />
-                        <AlertDialogBody>{`删除后无法恢复噢，确定删除该用例吗`}</AlertDialogBody>
-                        <AlertDialogFooter>
-                            <Button ref={cancelRef} onClick={onDeleteTipClose}>
-                                取消
-                            </Button>
-                            <Button
-                                isLoading={deleteLoading}
-                                colorScheme="red"
-                                ml={3}
-                                onClick={onDelete}
-                            >
-                                确认
-                            </Button>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            </ButtonGroup>
-        </HStack>
+                    {name}
+                </Text>
+                <Code
+                    px={2}
+                    w="20rem"
+                    whiteSpace="nowrap"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    title={pathname + search}
+                >
+                    {pathname + search}
+                </Code>
+                <ButtonGroup w="10rem">
+                    {createActionButton(
+                        <FcStart />,
+                        '执行',
+                        executeIssue,
+                        executeLoading
+                    )}
+                    {createActionButton(<FcEditImage />, '编辑', onOpen)}
+                    {createActionButton(
+                        <FcFullTrash />,
+                        '删除',
+                        onDeleteTipOpen
+                    )}
+                    <IssueModal
+                        isOpen={isOpen}
+                        loading={updateLoading}
+                        onClose={onClose}
+                        onConfirm={onUpdate}
+                        name={name}
+                    />
+                    <AlertDialog
+                        leastDestructiveRef={cancelRef}
+                        onClose={onDeleteTipClose}
+                        isOpen={isDeleteTipOpen}
+                    >
+                        <AlertDialogOverlay />
+                        <AlertDialogContent>
+                            <AlertDialogHeader>w(ﾟДﾟ)w</AlertDialogHeader>
+                            <AlertDialogCloseButton />
+                            <AlertDialogBody>{`删除后无法恢复噢，确定删除该用例吗`}</AlertDialogBody>
+                            <AlertDialogFooter>
+                                <Button
+                                    ref={cancelRef}
+                                    onClick={onDeleteTipClose}
+                                >
+                                    取消
+                                </Button>
+                                <Button
+                                    isLoading={deleteLoading}
+                                    colorScheme="red"
+                                    ml={3}
+                                    onClick={onDelete}
+                                >
+                                    确认
+                                </Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </ButtonGroup>
+            </HStack>
+            <Link
+                color="red.400"
+                fontStyle="italic"
+                fontWeight="bold"
+                hidden={!(isExecuted && !isPassed)}
+                onClick={() => {
+                    setShowError(!showError);
+                }}
+                pl="1rem"
+                pb={showError ? 0 : 2}
+                alignSelf="start"
+            >
+                {showError ? '隐藏' : '展开详细'}
+            </Link>
+            <Box hidden={!showError} pb="1rem">
+                {isExecuted && !isPassed ? (
+                    isError ? (
+                        <Text pl="1rem">{executionLists[id].error}</Text>
+                    ) : (
+                        <ReactDiffViewer
+                            oldValue={JSON.stringify(
+                                executionLists[id].data.refer,
+                                null,
+                                4
+                            )}
+                            newValue={JSON.stringify(
+                                executionLists[id].data.actual,
+                                null,
+                                4
+                            )}
+                            splitView={true}
+                        />
+                    )
+                ) : (
+                    <></>
+                )}
+            </Box>
+        </VStack>
     );
 };
 
