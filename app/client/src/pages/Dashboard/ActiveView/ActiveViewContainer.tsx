@@ -7,7 +7,7 @@ import { baseRequest } from '../../../config/axios';
 import { RoutePath } from '../../../hooks/url';
 import Wrapper from '../Wrapper/Wrapper';
 import AccountContainer from './Account/AccountContainer';
-import DevelopmentContainer from './development/DevelopmentContainer';
+import DevelopmentContainer from './Development/DevelopmentContainer';
 import ProjectContainer from './Project/ProjectContainer';
 
 const ActiveViewContainer: FC = () => {
