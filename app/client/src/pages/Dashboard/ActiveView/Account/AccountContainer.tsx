@@ -280,13 +280,11 @@ const AccountContainer: FC = () => {
                         </BreadcrumbLink>
                     </BreadcrumbItem>
                 </Breadcrumb>
-                <HStack>
+                <Box display="flex">
                     <Select
                         placeholder="执行完后通知..."
                         variant="filled"
                         w="10rem"
-                        overflow="hidden"
-                        textOverflow="ellipsis"
                         onChange={event => {
                             setRobot(event.target.value);
                         }}
@@ -306,6 +304,8 @@ const AccountContainer: FC = () => {
                         leftIcon={<Icon as={FcParallelTasks} boxSize={6} />}
                         onClick={executeAccount}
                         isLoading={executeLoading}
+                        ml="1rem"
+                        mr="1rem"
                     >
                         执行全部
                     </Button>
@@ -335,7 +335,7 @@ const AccountContainer: FC = () => {
                             </MenuItem>
                         </MenuList>
                     </Menu>
-                </HStack>
+                </Box>
                 <AccountModal
                     header="添加测试账号"
                     isOpen={isOpen}
