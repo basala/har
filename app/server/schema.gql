@@ -53,6 +53,7 @@ type ProjectEntity {
 }
 
 type FormatReport {
+  userId: String!
   createAt: Float!
   updateAt: Float!
   id: String!

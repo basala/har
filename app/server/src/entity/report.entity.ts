@@ -15,6 +15,11 @@ export class ReportEntity {
     @Expose()
     _id: string;
 
+    @Field()
+    @Column()
+    @Expose()
+    userId: string;
+
     @Column()
     @Type(() => Buffer)
     @Exclude()

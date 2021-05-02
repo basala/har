@@ -1,5 +1,5 @@
 import { RestAuthGuard } from '@auth';
-import { ReportEntity } from '@entity';
+import { ReportEntity, UserEntity } from '@entity';
 import {
     Body,
     Controller,
@@ -33,6 +33,7 @@ export class ExecutionController {
         @Req() request: Request
     ) {
         const { type, robot } = config;
+        const user = <UserEntity>request.user;
 
         let response: ExecutionResponse[];
         switch (type) {
@@ -60,6 +61,7 @@ export class ExecutionController {
                         content: map(response, item => {
                             return Buffer.from(JSON.stringify(item), 'utf-8');
                         }),
+                        userId: user.id,
                     })
                 );
                 let success = 0;
