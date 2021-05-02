@@ -52,6 +52,13 @@ type ProjectEntity {
   id: String!
 }
 
+type ReportEntity {
+  userId: String!
+  createAt: Float!
+  updateAt: Float!
+  id: String!
+}
+
 type FormatReport {
   userId: String!
   createAt: Float!
@@ -104,6 +111,7 @@ type Query {
   findAllIssues(input: String!): [IssueEntity!]!
   findAllRobots: [RobotEntity!]!
   findReport(id: String!): FormatReport!
+  findAllReports: [FormatReport!]!
 }
 
 type Mutation {
@@ -121,6 +129,8 @@ type Mutation {
   createRobot(input: CreateRobotInput!): RobotEntity!
   updateRobot(input: UpdateRobotInput!): RobotEntity!
   deleteRobot(id: String!): RobotEntity!
+  deleteReport(id: String!): ReportEntity!
+  deleteReports: [ReportEntity!]!
 }
 
 input CreateProjectInput {

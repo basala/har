@@ -9,6 +9,7 @@ import Wrapper from '../Wrapper/Wrapper';
 import AccountContainer from './Account/AccountContainer';
 import DevelopmentContainer from './Development/DevelopmentContainer';
 import ProjectContainer from './Project/ProjectContainer';
+import ReportHistory from './Report/ReportHistory';
 
 const ActiveViewContainer: FC = () => {
     const [hitokoto, setHitokoto] = React.useState('');
@@ -48,7 +49,7 @@ const ActiveViewContainer: FC = () => {
                         <ProjectContainer />
                     </Route>
                     <Route path={`/${RoutePath.Report}`}>
-                        <EmptyPane />
+                        <ReportHistory />
                     </Route>
                     <Route path={'/'}>
                         <Redirect to={`/${RoutePath.Project}`} />
