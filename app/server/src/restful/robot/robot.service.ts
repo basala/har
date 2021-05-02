@@ -1,15 +1,35 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { RobotEntity } from '@entity';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
+import { getMongoRepository } from 'typeorm';
 
 @Injectable()
 export class RobotService {
-    async sendTextMsg(
+    async sendMsgById(id: string, type: 'text' | 'markdown', msg: string) {
+        const robot = await getMongoRepository(RobotEntity).findOne({
+            _id: id,
+        });
+
+        if (!robot) {
+            throw new ForbiddenException('robot does not exist');
+        }
+
+        return this.sendMsg(
+            robot.webhook,
+            robot.mentioned_list,
+            msg,
+            'markdown'
+        );
+    }
+
+    async sendMsg(
         webhook: string,
         mentioned_list: string[],
-        text?: string
+        msg = '',
+        type: 'text' | 'markdown' = 'text'
     ) {
         const content =
-            text ||
+            msg ||
             (await axios
                 .get<{
                     hitokoto: string;
@@ -27,22 +47,31 @@ export class RobotService {
                     return '这是一条测试消息';
                 }));
 
+        const data = {
+            msgtype: type,
+            [type]: {
+                content,
+                ...(type === 'text' ? { mentioned_list } : {}),
+            },
+        };
+
         return axios
-            .post(
-                webhook,
-                {
-                    msgtype: 'text',
-                    text: {
-                        content,
-                        mentioned_list,
-                    },
+            .post(webhook, data, {
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+            })
+            .then(() => {
+                if (type === 'markdown') {
+                    return axios.post(webhook, {
+                        msgtype: 'text',
+                        text: {
+                            content: '',
+                            mentioned_list,
+                        },
+                    });
                 }
-            )
+            })
             .then(() => {
                 Logger.log('msg send success', 'SendTextMsg');
             })

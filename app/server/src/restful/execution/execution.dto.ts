@@ -13,5 +13,5 @@ export class ExecutionDto {
 
     @IsString()
     @IsOptional()
-    noticeId?: string;
+    robot?: string;
 }

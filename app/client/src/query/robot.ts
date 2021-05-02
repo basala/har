@@ -11,3 +11,13 @@ export const QUERY_ROBOTS = gql`
         }
     }
 `;
+
+export interface FindAllRobotsResponse {
+    findAllRobots: {
+        id: string;
+        name: string;
+        webhook: string;
+        mentioned_list: string[];
+        updateAt: number;
+    }[];
+}

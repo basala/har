@@ -26,7 +26,7 @@ export class RobotController {
         const { webhook, mentioned_list } = connection;
 
         await this.robotService
-            .sendTextMsg(webhook, mentioned_list)
+            .sendMsg(webhook, mentioned_list)
             .catch(error => {
                 throw new BadRequestException(error.message);
             });

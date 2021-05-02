@@ -8,7 +8,10 @@ import React, { FC } from 'react';
 import { FcExpired, FcHighPriority, FcPlus } from 'react-icons/fc';
 import EmptyPane from '../../../../../components/Exception/EmptyPane';
 import CatLoading from '../../../../../components/Loading/CatLoading';
-import { QUERY_ROBOTS } from '../../../../../query/robot';
+import {
+    FindAllRobotsResponse,
+    QUERY_ROBOTS,
+} from '../../../../../query/robot';
 import RobotItem from './RobotItem';
 import RobotModal, { RobotParams } from './RobotModal';
 
@@ -21,15 +24,9 @@ const ADD_ROBOT = gql`
 `;
 
 const RobotView: FC = () => {
-    const { loading, data, error } = useQuery<{
-        findAllRobots: {
-            id: string;
-            name: string;
-            webhook: string;
-            mentioned_list: string[];
-            updateAt: number;
-        }[];
-    }>(QUERY_ROBOTS);
+    const { loading, data, error } = useQuery<FindAllRobotsResponse>(
+        QUERY_ROBOTS
+    );
     const [createRobot, { loading: addLoading }] = useMutation<
         {
             createRobot: {

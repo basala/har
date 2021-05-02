@@ -80,6 +80,7 @@ interface IssueItemProps {
     issue: Issue;
     executionLists: ExecutionResultMap;
     setExecutionLists: React.Dispatch<React.SetStateAction<ExecutionResultMap>>;
+    robot: string;
 }
 
 interface UpdateIssueInput {

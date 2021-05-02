@@ -16,6 +16,7 @@ interface AccountViewerProps {
     setAdding: React.Dispatch<React.SetStateAction<boolean>>;
     executionLists: ExecutionResultMap;
     setExecutionLists: React.Dispatch<React.SetStateAction<ExecutionResultMap>>;
+    robot: string;
 }
 
 const AccountViewer: FC<AccountViewerProps> = props => {
@@ -75,6 +76,7 @@ const AccountViewer: FC<AccountViewerProps> = props => {
                             environment={environment}
                             executionLists={props.executionLists}
                             setExecutionLists={props.setExecutionLists}
+                            robot={props.robot}
                         />
                     </Box>
                 );

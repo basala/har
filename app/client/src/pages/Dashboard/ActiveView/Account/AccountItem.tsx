@@ -45,6 +45,7 @@ interface AccountItemProps {
     environment: AccountParams;
     executionLists: ExecutionResultMap;
     setExecutionLists: React.Dispatch<React.SetStateAction<ExecutionResultMap>>;
+    robot: string;
 }
 
 const UPDATE_ACCOUNT = gql`
@@ -332,6 +333,7 @@ const AccountItem: FC<AccountItemProps> = props => {
                                         setExecutionLists={
                                             props.setExecutionLists
                                         }
+                                        robot={props.robot}
                                     />
                                 ) : (
                                     <></>

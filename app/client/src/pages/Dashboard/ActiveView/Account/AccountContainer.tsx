@@ -1,4 +1,4 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import {
     Box,
     Breadcrumb,
@@ -13,6 +13,7 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
+    Select,
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
@@ -23,6 +24,7 @@ import { Link } from 'react-router-dom';
 import { RemoteUrl } from '../../../../config/apollo';
 import { baseRequest } from '../../../../config/axios';
 import { RoutePath, useUrlPath } from '../../../../hooks/url';
+import { FindAllRobotsResponse, QUERY_ROBOTS } from '../../../../query/robot';
 import AccountViewer from './AccountViewer';
 import { ExecutionResult, ExecutionResultMap } from './issue/IssueItem';
 import AccountModal, { AccountParams } from './modal/AccountModal';
@@ -56,6 +58,7 @@ export interface CreateAccountInput {
 }
 
 const AccountContainer: FC = () => {
+    const [robot, setRobot] = React.useState('');
     const [, projectId] = useUrlPath();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const {
@@ -63,6 +66,7 @@ const AccountContainer: FC = () => {
         onOpen: onUploadOpen,
         onClose: onUploadClose,
     } = useDisclosure();
+    const { data: robots } = useQuery<FindAllRobotsResponse>(QUERY_ROBOTS);
     const [createAccount, { loading }] = useMutation<
         {
             createAccount: {
@@ -234,6 +238,7 @@ const AccountContainer: FC = () => {
         const response = await baseRequest
             .post<ExecutionResult[]>(`${RemoteUrl}/execute/${projectId}`, {
                 type: 1,
+                robot,
             })
             .catch(error => {
                 console.log(error);
@@ -275,13 +280,32 @@ const AccountContainer: FC = () => {
                         </BreadcrumbLink>
                     </BreadcrumbItem>
                 </Breadcrumb>
-                <Box>
+                <HStack>
+                    <Select
+                        placeholder="执行完后通知..."
+                        variant="filled"
+                        w="10rem"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        onChange={event => {
+                            setRobot(event.target.value);
+                        }}
+                    >
+                        {_.map(robots?.findAllRobots, robot => {
+                            const { id, name } = robot;
+
+                            return (
+                                <option key={id} value={id}>
+                                    {name}
+                                </option>
+                            );
+                        })}
+                    </Select>
                     <Button
                         colorScheme="pink"
                         leftIcon={<Icon as={FcParallelTasks} boxSize={6} />}
                         onClick={executeAccount}
                         isLoading={executeLoading}
-                        mr="1rem"
                     >
                         执行全部
                     </Button>
@@ -311,7 +335,7 @@ const AccountContainer: FC = () => {
                             </MenuItem>
                         </MenuList>
                     </Menu>
-                </Box>
+                </HStack>
                 <AccountModal
                     header="添加测试账号"
                     isOpen={isOpen}
@@ -333,6 +357,7 @@ const AccountContainer: FC = () => {
                     setAdding={setAdding}
                     executionLists={executionLists}
                     setExecutionLists={setExecutionLists}
+                    robot={robot}
                 />
             </Box>
         </Flex>

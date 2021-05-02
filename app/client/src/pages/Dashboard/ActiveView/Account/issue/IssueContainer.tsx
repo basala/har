@@ -10,6 +10,7 @@ interface IssueContainerProps {
     id: string;
     executionLists: ExecutionResultMap;
     setExecutionLists: React.Dispatch<React.SetStateAction<ExecutionResultMap>>;
+    robot: string;
 }
 
 const QUERY_ISSUE = gql`
@@ -87,6 +88,7 @@ const IssueContainer: FC<IssueContainerProps> = props => {
                             issue={issue}
                             executionLists={props.executionLists}
                             setExecutionLists={props.setExecutionLists}
+                            robot={props.robot}
                         />
                     </Box>
                 );
