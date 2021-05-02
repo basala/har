@@ -9,6 +9,7 @@ import {
     StatHelpText,
     StatLabel,
     StatNumber,
+    Switch,
     Text,
     VStack,
 } from '@chakra-ui/react';
@@ -41,6 +42,7 @@ const QUERY_REPORT = gql`
 const ReportView: FC = () => {
     const [, reportId] = useUrlPath();
     const startRef = React.useRef<HTMLDivElement>(null);
+    const [showErrorOnly, setShowErrorOnly] = React.useState(false);
 
     const { loading, data, error } = useQuery<
         {
@@ -214,16 +216,30 @@ const ReportView: FC = () => {
                     )}
                     {total > 0 ? (
                         <Box p={4}>
-                            <Text fontWeight="bold" fontSize={16}>
-                                详细执行情况
-                            </Text>
+                            <HStack spacing={4}>
+                                <Text fontWeight="bold" fontSize={16}>
+                                    详细执行情况
+                                </Text>
+                                <Text pl="4rem">只显示错误项</Text>
+                                <Switch
+                                    size="lg"
+                                    onChange={event => {
+                                        setShowErrorOnly(event.target.checked);
+                                    }}
+                                />
+                            </HStack>
                             <VStack alignItems="stretch" mt="2rem" spacing={4}>
                                 {_.map(_.keys(group), key => {
                                     return (
                                         <ReportAccountItem
                                             key={key}
                                             name={key}
-                                            issues={group[key]}
+                                            issues={group[key].filter(issue => {
+                                                return (
+                                                    !showErrorOnly ||
+                                                    !issue.success
+                                                );
+                                            })}
                                         />
                                     );
                                 })}

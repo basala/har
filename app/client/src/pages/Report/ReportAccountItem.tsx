@@ -10,7 +10,8 @@ import {
 } from '@chakra-ui/react';
 import _ from 'lodash';
 import React, { FC } from 'react';
-import { FcFolder, FcOpenedFolder } from 'react-icons/fc';
+import { FcExpired, FcFolder, FcOpenedFolder } from 'react-icons/fc';
+import EmptyPane from '../../components/Exception/EmptyPane';
 import ReportIssueItem, { ExecutionResult } from './ReportIssueItem';
 
 interface ReportAccountItemProps {
@@ -57,16 +58,23 @@ const ReportAccountItem: FC<ReportAccountItemProps> = props => {
                                 </Box>
                                 <AccordionIcon />
                             </AccordionButton>
-                            <AccordionPanel>
+                            <AccordionPanel minH="4rem">
                                 <Stack spacing={4}>
-                                    {_.map(issues, issue => {
-                                        return (
-                                            <ReportIssueItem
-                                                key={issue.data.id}
-                                                issue={issue}
-                                            />
-                                        );
-                                    })}
+                                    {_.isEmpty(issues) ? (
+                                        <EmptyPane
+                                            icon={FcExpired}
+                                            text="空空如也噢ヽ(✿ﾟ▽ﾟ)ノ"
+                                        />
+                                    ) : (
+                                        _.map(issues, issue => {
+                                            return (
+                                                <ReportIssueItem
+                                                    key={issue.data.id}
+                                                    issue={issue}
+                                                />
+                                            );
+                                        })
+                                    )}
                                 </Stack>
                             </AccordionPanel>
                         </>
