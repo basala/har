@@ -1,6 +1,5 @@
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { FcExpired } from 'react-icons/fc';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import EmptyPane from '../../../components/Exception/EmptyPane';
 import { ColorModeSwitcher } from '../../../components/theme/ColorModeSwitcher';
@@ -37,10 +36,7 @@ const ActiveViewContainer: FC = () => {
             <Wrapper flex="1" overflow="auto">
                 <Switch>
                     <Route path={`/${RoutePath.Settings}`}>
-                        <EmptyPane
-                            icon={FcExpired}
-                            text="貌似什么都没有噢ヽ(✿ﾟ▽ﾟ)ノ"
-                        />
+                        <EmptyPane text="正在施工中噢ヽ(✿ﾟ▽ﾟ)ノ" />
                     </Route>
                     <Route path={`/${RoutePath.Development}`}>
                         <DevelopmentContainer />
@@ -50,6 +46,9 @@ const ActiveViewContainer: FC = () => {
                     </Route>
                     <Route path={`/${RoutePath.Project}`}>
                         <ProjectContainer />
+                    </Route>
+                    <Route path={`/${RoutePath.Report}`}>
+                        <EmptyPane />
                     </Route>
                     <Route path={'/'}>
                         <Redirect to={`/${RoutePath.Project}`} />

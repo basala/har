@@ -1,7 +1,12 @@
 import { Stack, VStack } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { IconType } from 'react-icons';
-import { FcBiomass, FcHome, FcSettings } from 'react-icons/fc';
+import {
+    FcBiomass,
+    FcHome,
+    FcPositiveDynamic,
+    FcSettings,
+} from 'react-icons/fc';
 import { matchPath } from 'react-router-dom';
 import { RoutePath, useUrlPath } from '../../../hooks/url';
 import Wrapper from '../Wrapper/Wrapper';
@@ -27,6 +32,11 @@ const ITEMS: {
         title: '实验室',
         path: RoutePath.Development,
         icon: FcBiomass,
+    },
+    {
+        title: '统计',
+        path: RoutePath.Report,
+        icon: FcPositiveDynamic,
     },
 ];
 

@@ -69,7 +69,7 @@ const DELETE_ACCOUNT = gql`
 `;
 
 const AccountItem: FC<AccountItemProps> = props => {
-    const { id, name, environment } = props;
+    const { id, name, environment, robot } = props;
     const bg = useColorModeValue(
         '#fff linear-gradient( 135deg, rgba(250, 215, 161, 0.3) 10%, rgba(233, 109, 133, 0.3) 100%);',
         '#1a212c'
@@ -201,6 +201,7 @@ const AccountItem: FC<AccountItemProps> = props => {
         const response = await baseRequest
             .post<ExecutionResult[]>(`${RemoteUrl}/execute/${id}`, {
                 type: 2,
+                robot,
             })
             .catch(error => {
                 console.log(error);

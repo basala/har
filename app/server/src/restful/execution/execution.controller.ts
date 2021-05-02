@@ -74,11 +74,7 @@ export class ExecutionController {
                 });
 
                 const url =
-                    request.protocol +
-                    '://' +
-                    request.get('host') +
-                    '/report/s/' +
-                    createReport.id;
+                    request.headers.referer + 'report/s/' + createReport.id;
                 this.robotService.sendMsgById(
                     robot,
                     'markdown',

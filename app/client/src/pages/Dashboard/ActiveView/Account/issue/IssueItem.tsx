@@ -108,6 +108,7 @@ const IssueItem: FC<IssueItemProps> = props => {
     const {
         issue: { name, url, method, id },
         executionLists,
+        robot,
     } = props;
     const { pathname, search } = new URL(url);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -234,6 +235,7 @@ const IssueItem: FC<IssueItemProps> = props => {
         const response = await baseRequest
             .post<ExecutionResult[]>(`${RemoteUrl}/execute/${id}`, {
                 type: 3,
+                robot,
             })
             .catch(error => {
                 console.log(error);
