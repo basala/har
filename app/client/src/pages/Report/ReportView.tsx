@@ -128,6 +128,7 @@ const ReportView: FC = () => {
                         right="-2px"
                         overflow="hidden"
                         zIndex="1"
+                        mt="0!important"
                     >
                         <Text
                             transform="rotate(45deg)"
