@@ -47,7 +47,7 @@ const ReportView: FC = () => {
             findReport: {
                 id: string;
                 report: ExecutionResult[];
-                updateAt: Number;
+                updateAt: number;
             };
         },
         { id: string }
@@ -152,6 +152,11 @@ const ReportView: FC = () => {
                         <Icon h="100%" as={FcSurvey} fontSize={24} />
                         <Text fontWeight="bold" fontSize={24}>
                             执行结果
+                        </Text>
+                        <Text pl="1rem" fontWeight="bold" color="gray.500">
+                            {new Date(
+                                data?.findReport.updateAt!
+                            ).toLocaleString()}
                         </Text>
                     </HStack>
                     <StatGroup
