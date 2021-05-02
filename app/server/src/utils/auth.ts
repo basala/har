@@ -23,7 +23,7 @@ export async function generateToken(
         );
 
         if (response.status === 200) {
-            const token = get(response.data, JSON.parse(tokenPath));
+            const token = get(response.data, tokenPath);
 
             if (isEmpty(token)) {
                 return {

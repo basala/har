@@ -63,12 +63,12 @@ const AccountViewer: FC<AccountViewerProps> = props => {
     }
 
     return (
-        <VStack spacing={1}>
+        <VStack spacing={1} align="stretch">
             {_.map(data?.findAllAccounts, (account, index) => {
                 const { id, name, environment } = account;
 
                 return (
-                    <Box w="100%" px={4} py={2} key={id}>
+                    <Box px={4} py={2} key={id}>
                         <AccountItem
                             id={id}
                             name={name}

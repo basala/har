@@ -50,7 +50,7 @@ const defaultValue: ProjectParams = {
     "password": "$password",
     "encrypted": false
 }`,
-        tokenPath: `["data", "token"]`,
+        tokenPath: 'data.token',
     },
 };
 
@@ -101,10 +101,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
         }
 
         try {
-            if (
-                typeof JSON.parse(authBody) == 'object' &&
-                typeof JSON.parse(tokenPath) == 'object'
-            ) {
+            if (typeof JSON.parse(authBody) == 'object') {
                 return true;
             }
         } catch {}
@@ -196,7 +193,7 @@ const ProjectModal: FC<ProjectModalProps> = props => {
                                     children={<Icon as={FcServices} />}
                                 />
                                 <Input
-                                    placeholder={`eg: (json格式) ["data", "token"]`}
+                                    placeholder={'eg: data.token'}
                                     value={tokenPath}
                                     onChange={event => {
                                         setTokenPath(event.target.value);

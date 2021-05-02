@@ -14,12 +14,12 @@ export function useUrlPath() {
 
     switch (modulePath) {
         case RoutePath.Project:
+        case RoutePath.Development:
             return [modulePath, identify];
         case RoutePath.Report:
             return [modulePath, identify === 's' ? sessionId : ''];
         case RoutePath.Login:
         case RoutePath.Settings:
-        case RoutePath.Development:
         default:
             return [modulePath];
     }

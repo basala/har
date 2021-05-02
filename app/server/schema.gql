@@ -52,6 +52,16 @@ type ProjectEntity {
   id: String!
 }
 
+type RobotEntity {
+  userId: String!
+  name: String!
+  webhook: String!
+  mentioned_list: [String!]!
+  createAt: Float!
+  updateAt: Float!
+  id: String!
+}
+
 type UserEntity {
   username: String!
   salt: String!
@@ -79,6 +89,7 @@ type Query {
   verifyToken(token: String!): VerifyTokenResponse!
   findAllAccounts(input: String!): [AccountEntity!]!
   findAllIssues(input: String!): [IssueEntity!]!
+  findAllRobots: [RobotEntity!]!
 }
 
 type Mutation {
@@ -93,6 +104,9 @@ type Mutation {
   createIssues(position: String!, hars: [CreateIssuesInput!]!): [IssueEntity!]!
   updateIssue(input: UpdateIssueInput!): IssueEntity!
   deleteIssue(id: String!): IssueEntity!
+  createRobot(input: CreateRobotInput!): RobotEntity!
+  updateRobot(input: UpdateRobotInput!): RobotEntity!
+  deleteRobot(id: String!): RobotEntity!
 }
 
 input CreateProjectInput {
@@ -144,4 +158,17 @@ input CreateIssuesInput {
 input UpdateIssueInput {
   id: String!
   name: String!
+}
+
+input CreateRobotInput {
+  name: String!
+  webhook: String!
+  mentioned_list: [String!]!
+}
+
+input UpdateRobotInput {
+  name: String!
+  webhook: String!
+  mentioned_list: [String!]!
+  id: String!
 }

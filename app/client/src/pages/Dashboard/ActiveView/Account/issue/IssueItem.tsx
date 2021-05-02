@@ -361,9 +361,9 @@ const IssueItem: FC<IssueItemProps> = props => {
                 }}
                 pl="1rem"
                 pb={showError ? 0 : 2}
-                alignSelf="start"
+                alignSelf="flex-start"
             >
-                {showError ? '隐藏' : '展开详细'}
+                {showError ? '收起' : '展开详细...'}
             </Link>
             <Box hidden={!showError} pb="1rem">
                 {isExecuted && !isPassed ? (

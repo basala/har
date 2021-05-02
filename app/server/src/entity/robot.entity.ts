@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Expose, plainToClass, Type } from 'class-transformer';
 import { Column, Entity, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
@@ -15,18 +15,33 @@ export class RobotEntity {
     @Field()
     @Column()
     @Expose()
+    userId: string;
+
+    @Field()
+    @Column()
+    @Expose()
     name: string;
 
     @Field()
     @Column()
     @Expose()
-    url: string;
+    webhook: string;
 
     @Field(() => [String])
     @Column()
     @Type(() => String)
     @Expose()
-    members: string[];
+    mentioned_list: string[];
+
+    @Field()
+    @Column()
+    @Expose()
+    createAt: number;
+
+    @Field()
+    @Column()
+    @Expose()
+    updateAt: number;
 
     @Field()
     @Expose()
@@ -34,7 +49,7 @@ export class RobotEntity {
         return this._id;
     }
 
-    constructor(config: Omit<RobotEntity, '_id'>) {
+    constructor(config: Partial<RobotEntity>) {
         if (config) {
             Object.assign(
                 this,
@@ -44,6 +59,31 @@ export class RobotEntity {
             );
 
             this._id = this._id || v4();
+            this.createAt = this.createAt || Date.now();
+            this.updateAt = this.updateAt || this.createAt;
         }
     }
+}
+
+@InputType()
+export class CreateRobotInput {
+    @Field()
+    @Expose()
+    name: string;
+
+    @Field()
+    @Expose()
+    webhook: string;
+
+    @Field(() => [String])
+    @Type(() => String)
+    @Expose()
+    mentioned_list: string[];
+}
+
+@InputType()
+export class UpdateRobotInput extends CreateRobotInput {
+    @Field()
+    @Expose()
+    id: string;
 }

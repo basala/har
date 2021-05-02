@@ -8,6 +8,7 @@ import { baseRequest } from '../../../config/axios';
 import { RoutePath } from '../../../hooks/url';
 import Wrapper from '../Wrapper/Wrapper';
 import AccountContainer from './Account/AccountContainer';
+import DevelopmentContainer from './development/DevelopmentContainer';
 import ProjectContainer from './Project/ProjectContainer';
 
 const ActiveViewContainer: FC = () => {
@@ -42,7 +43,7 @@ const ActiveViewContainer: FC = () => {
                         />
                     </Route>
                     <Route path={`/${RoutePath.Development}`}>
-                        <EmptyPane />
+                        <DevelopmentContainer />
                     </Route>
                     <Route path={`/${RoutePath.Project}/:id`}>
                         <AccountContainer />

@@ -7,9 +7,11 @@ import { AccountResolver } from './resolver/account.resolver';
 import { AuthResolver } from './resolver/auth.resolver';
 import { IssueResolver } from './resolver/issue.resolver';
 import { ProjectResolver } from './resolver/project.resolver';
+import { RobotResolver } from './resolver/robot.resolver';
 import { UserResolver } from './resolver/user.resolver';
 import { AccountModule } from './restful/account/account.module';
 import { ExecutionModule } from './restful/execution/execution.module';
+import { RobotModule } from './restful/robot/robot.module';
 
 @Module({
     imports: [
@@ -21,6 +23,7 @@ import { ExecutionModule } from './restful/execution/execution.module';
         }),
         AccountModule,
         ExecutionModule,
+        RobotModule,
     ],
     controllers: [AppController],
     providers: [
@@ -29,6 +32,7 @@ import { ExecutionModule } from './restful/execution/execution.module';
         AuthResolver,
         AccountResolver,
         IssueResolver,
+        RobotResolver,
     ],
 })
 export class AppModule {}
