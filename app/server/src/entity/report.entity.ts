@@ -1,7 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Expose, plainToClass, Type } from 'class-transformer';
+import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
+import GraphQLJSON from 'graphql-type-json';
+import { map } from 'lodash';
 import { Column, Entity, ObjectIdColumn } from 'typeorm';
 import { v4 } from 'uuid';
+import { ExecutionResponse } from '../restful/execution/execution.service';
 
 @ObjectType()
 @Entity({
@@ -12,10 +15,9 @@ export class ReportEntity {
     @Expose()
     _id: string;
 
-    @Field(() => [Buffer])
     @Column()
     @Type(() => Buffer)
-    @Expose()
+    @Exclude()
     content: Buffer[];
 
     @Field()
@@ -46,6 +48,22 @@ export class ReportEntity {
             this._id = this._id || v4();
             this.createAt = this.createAt || Date.now();
             this.updateAt = this.updateAt || this.createAt;
+            this.content = config.content;
         }
+    }
+}
+
+@ObjectType()
+export class FormatReport extends ReportEntity {
+    @Field(() => GraphQLJSON)
+    @Expose()
+    report: ExecutionResponse[];
+
+    constructor(report: ReportEntity) {
+        super(report);
+
+        this.report = map(this.content, item => {
+            return JSON.parse(item.toString());
+        });
     }
 }

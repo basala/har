@@ -1,6 +1,6 @@
+import { UserEntity } from '@entity';
 import * as passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { UserEntity } from 'src/entity';
 import { getMongoRepository } from 'typeorm';
 import { AuthResponse } from '../types';
 

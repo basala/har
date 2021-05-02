@@ -10,7 +10,7 @@ import {
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common';
-import { generateToken } from 'src/utils/auth';
+import { generateToken } from '@utils';
 import { getMongoRepository } from 'typeorm';
 import { TestConnectionDto } from './account.dto';
 

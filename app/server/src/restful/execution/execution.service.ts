@@ -11,9 +11,9 @@ import {
     Injectable,
     Logger,
 } from '@nestjs/common';
+import { generateToken } from '@utils';
 import axios from 'axios';
 import { flatten, isEqual, map, pick } from 'lodash';
-import { generateToken } from 'src/utils/auth';
 import { getMongoRepository } from 'typeorm';
 
 export interface ExecutionResponse {
@@ -25,10 +25,9 @@ export interface ExecutionResponse {
         name: string;
         url: string;
         method: RequestType;
-        accountId: string;
         accountName: string;
-        projectId: string;
         projectName: string;
+        host: string;
     };
     error?: string;
 }
@@ -89,10 +88,9 @@ export class ExecutionService {
                                     name: issue.name,
                                     url: issue.url,
                                     method: issue.method,
-                                    accountId: account.id,
                                     accountName: account.name,
-                                    projectId: id,
                                     projectName: project.name,
+                                    host: project.environment.host,
                                 },
                             };
                         });
@@ -114,10 +112,9 @@ export class ExecutionService {
                                     name: issue.name,
                                     url: issue.url,
                                     method: issue.method,
-                                    accountId: account.id,
                                     accountName: account.name,
-                                    projectId: id,
                                     projectName: project.name,
+                                    host: project.environment.host,
                                 },
                             };
                         })
@@ -140,7 +137,7 @@ export class ExecutionService {
         }
 
         const project = await getMongoRepository(ProjectEntity).findOne({
-            select: ['environment', 'id', 'name'],
+            select: ['environment', 'name'],
             where: {
                 _id: account.projectId,
             },
@@ -190,10 +187,9 @@ export class ExecutionService {
                         name: issue.name,
                         url: issue.url,
                         method: issue.method,
-                        accountId: id,
                         accountName: account.name,
-                        projectId: project.id,
                         projectName: project.name,
+                        host: project.environment.host,
                     },
                 };
             })
@@ -221,7 +217,7 @@ export class ExecutionService {
         }
 
         const account = await getMongoRepository(AccountEntity).findOne({
-            select: ['environment', 'projectId', 'name', 'id'],
+            select: ['environment', 'projectId', 'name'],
             where: {
                 _id: issue.accountId,
             },
@@ -232,7 +228,7 @@ export class ExecutionService {
         }
 
         const project = await getMongoRepository(ProjectEntity).findOne({
-            select: ['environment', 'id', 'name'],
+            select: ['environment', 'name'],
             where: {
                 _id: account.projectId,
             },
@@ -266,10 +262,9 @@ export class ExecutionService {
                     name: issue.name,
                     url: issue.url,
                     method: issue.method,
-                    accountId: account.id,
                     accountName: account.name,
-                    projectId: project.id,
                     projectName: project.name,
+                    host: project.environment.host,
                 },
             },
         ];

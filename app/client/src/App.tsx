@@ -6,6 +6,7 @@ import { client } from './config/apollo';
 import { RoutePath } from './hooks/url';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Login from './pages/Login/Login';
+import ReportView from './pages/Report/ReportView';
 
 export const App = () => (
     <ApolloProvider client={client}>
@@ -14,6 +15,9 @@ export const App = () => (
                 <Switch>
                     <Route path={`/${RoutePath.Login}`}>
                         <Login />
+                    </Route>
+                    <Route path={`/${RoutePath.Report}/s/:id`}>
+                        <ReportView />
                     </Route>
                     <Route path={'/'}>
                         <Dashboard />
