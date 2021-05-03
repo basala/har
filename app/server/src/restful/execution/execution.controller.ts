@@ -75,8 +75,8 @@ export class ExecutionController {
                     }
                 });
 
-                const url =
-                    request.get('Referer') + 'report/s/' + createReport.id;
+                const { origin } = new URL(request.get('Referer'));
+                const url = origin + '/report/s/' + createReport.id;
                 this.robotService.sendMsgById(
                     robot,
                     'markdown',
