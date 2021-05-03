@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { TypeormService } from './config';
 import { AccountResolver } from './resolver/account.resolver';
@@ -16,6 +18,9 @@ import { RobotModule } from './restful/robot/robot.module';
 
 @Module({
     imports: [
+        ServeStaticModule.forRoot({
+            rootPath: join(__dirname, '..', 'public'),
+        }),
         GraphQLModule.forRoot({
             autoSchemaFile: 'schema.gql',
         }),
