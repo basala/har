@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+# build client
+cd app/client
+yarn install
+yarn build
+cd -
+
+# build server
+cd app/server
+yarn install
+yarn build
+yarn install --production
+cd -
+
+# copy client files
+cp -r app/client/build/* app/server/public
