@@ -20,6 +20,7 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import _ from 'lodash';
 import React, { FC } from 'react';
 import {
@@ -30,7 +31,6 @@ import {
     FcStart,
 } from 'react-icons/fc';
 import { RemoteUrl } from '../../../../config/apollo';
-import { baseRequest } from '../../../../config/axios';
 import IssueContainer from './issue/IssueContainer';
 import {
     createActionButton,
@@ -198,7 +198,7 @@ const AccountItem: FC<AccountItemProps> = props => {
     const executeAccount = async () => {
         setExecuteLoading(true);
 
-        const response = await baseRequest
+        const response = await axios
             .post<ExecutionResult[]>(`${RemoteUrl}/execute/${id}`, {
                 type: 2,
                 robot,

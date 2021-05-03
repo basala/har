@@ -17,10 +17,10 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import React, { FC } from 'react';
 import { FcAndroidOs, FcConferenceCall, FcLink } from 'react-icons/fc';
 import { RemoteUrl } from '../../../../../config/apollo';
-import { baseRequest } from '../../../../../config/axios';
 
 interface RobotModalProps {
     header: string;
@@ -72,7 +72,7 @@ const RobotModal: FC<RobotModalProps> = props => {
 
         setConnectionLoading(true);
 
-        const response = await baseRequest
+        const response = await axios
             .post<{
                 valid: boolean;
             }>(RemoteUrl + '/robot/connection', {

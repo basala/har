@@ -3,6 +3,7 @@ import { ChakraProvider, theme } from '@chakra-ui/react';
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { client } from './config/apollo';
+import './config/axios';
 import { RoutePath } from './hooks/url';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Login from './pages/Login/Login';

@@ -1,9 +1,9 @@
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import axios from 'axios';
 import React, { FC } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import EmptyPane from '../../../components/Exception/EmptyPane';
 import { ColorModeSwitcher } from '../../../components/theme/ColorModeSwitcher';
-import { baseRequest } from '../../../config/axios';
 import { RoutePath } from '../../../hooks/url';
 import Wrapper from '../Wrapper/Wrapper';
 import AccountContainer from './Account/AccountContainer';
@@ -15,7 +15,7 @@ const ActiveViewContainer: FC = () => {
     const [hitokoto, setHitokoto] = React.useState('');
 
     React.useEffect(() => {
-        baseRequest
+        axios
             .get<{
                 hitokoto: string;
                 from_who: string;

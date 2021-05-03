@@ -17,12 +17,12 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import _ from 'lodash';
 import React, { FC } from 'react';
 import { FcFile, FcFolder, FcParallelTasks, FcPlus } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { RemoteUrl } from '../../../../config/apollo';
-import { baseRequest } from '../../../../config/axios';
 import { RoutePath, useUrlPath } from '../../../../hooks/url';
 import { FindAllRobotsResponse, QUERY_ROBOTS } from '../../../../query/robot';
 import AccountViewer from './AccountViewer';
@@ -235,7 +235,7 @@ const AccountContainer: FC = () => {
     const executeAccount = async () => {
         setExecuteLoading(true);
 
-        const response = await baseRequest
+        const response = await axios
             .post<ExecutionResult[]>(`${RemoteUrl}/execute/${projectId}`, {
                 type: 1,
                 robot,

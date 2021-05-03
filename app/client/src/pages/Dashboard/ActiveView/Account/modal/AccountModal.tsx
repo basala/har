@@ -17,10 +17,10 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import React, { FC } from 'react';
 import { FcBusinessman, FcLock } from 'react-icons/fc';
 import { RemoteUrl } from '../../../../../config/apollo';
-import { baseRequest } from '../../../../../config/axios';
 import { useUrlPath } from '../../../../../hooks/url';
 
 interface AccountModalProps {
@@ -74,7 +74,7 @@ const AccountModal: FC<AccountModalProps> = props => {
     const testConnection = React.useCallback(async () => {
         setConnectionLoading(true);
 
-        const response = await baseRequest
+        const response = await axios
             .post<{
                 valid: boolean;
             }>(RemoteUrl + '/account/connection', {

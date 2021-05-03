@@ -21,7 +21,7 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
-import { Method } from 'axios';
+import axios, { Method } from 'axios';
 import _ from 'lodash';
 import React, { FC } from 'react';
 import ReactDiffViewer from 'react-diff-viewer';
@@ -34,7 +34,6 @@ import {
     FcVideoFile,
 } from 'react-icons/fc';
 import { RemoteUrl } from '../../../../../config/apollo';
-import { baseRequest } from '../../../../../config/axios';
 import IssueModal from './IssueModal';
 
 export function createActionButton(
@@ -232,7 +231,7 @@ const IssueItem: FC<IssueItemProps> = props => {
     const executeIssue = async () => {
         setExecuteLoading(true);
 
-        const response = await baseRequest
+        const response = await axios
             .post<ExecutionResult[]>(`${RemoteUrl}/execute/${id}`, {
                 type: 3,
                 robot,
