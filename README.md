@@ -112,6 +112,8 @@ $ docker network connect my-net har-test
 $ docker network inspect my-net
 ```
 
+And then restart your containers.
+
 ## More Support
 
 Any other questions please use [Google](https://www.google.com) or contact Kira or Okami-fay😎😎😎😎😎.
