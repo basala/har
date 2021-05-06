@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 config();
 
 // mongodb
+const MONGO_URL = process.env.MONGO_URL || '';
 const MONGO_HOST = process.env.MONGO_HOST || '';
 const MONGO_PORT: number = +process.env.MONGO_PORT || 27017;
 const MONGO_DB: string = process.env.MONGO_DATABASE;
@@ -13,6 +14,7 @@ const MONGO_AUTHSOURCE: string = process.env.MONGO_AUTHSOURCE;
 
 // typeorm
 export const TYPEORM = {
+    url: MONGO_URL,
     host: MONGO_HOST,
     port: MONGO_PORT,
     username: MONGO_USER,
