@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { FC } from 'react';
-import { FcBusinessman, FcLock } from 'react-icons/fc';
+import { FcBusinessman, FcFolder, FcLock } from 'react-icons/fc';
 import { RemoteUrl } from '../../../../../config/apollo';
 import { useUrlPath } from '../../../../../hooks/url';
 
@@ -27,8 +27,9 @@ interface AccountModalProps {
     header: string;
     loading: boolean;
     loadingText?: string;
-    onConfirm: (input: AccountParams) => void;
-    value?: Partial<AccountParams>;
+    onConfirm: (name: string, environment: AccountParams) => void;
+    name?: string;
+    environment?: AccountParams;
     isOpen: boolean;
     onClose: () => void;
 }
@@ -48,18 +49,20 @@ const AccountModal: FC<AccountModalProps> = props => {
         loadingText = '',
     } = props;
     const [, projectId] = useUrlPath();
+    const [name, setName] = React.useState('');
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [connectionLoading, setConnectionLoading] = React.useState(false);
 
     React.useEffect(() => {
-        setUsername(props.value?.username || '');
-        setPassword(props.value?.password || '');
-    }, [props.value, props.isOpen]);
+        setName(props.name || '');
+        setUsername(props.environment?.username || '');
+        setPassword(props.environment?.password || '');
+    }, [props.environment, props.isOpen, props.name]);
 
     const toast = useToast();
     const checkValid = () => {
-        if (!username || !password) {
+        if (!name || !username || !password) {
             toast({
                 description: '请先填写必填项',
                 status: 'error',
@@ -115,6 +118,21 @@ const AccountModal: FC<AccountModalProps> = props => {
                 <ModalBody>
                     <VStack spacing={4} textAlign="left">
                         <FormControl isRequired>
+                            <FormLabel>名称</FormLabel>
+                            <InputGroup>
+                                <InputLeftElement
+                                    children={<Icon as={FcFolder} />}
+                                />
+                                <Input
+                                    placeholder="i need a name"
+                                    defaultValue={name}
+                                    onChange={event => {
+                                        setName(event.target.value);
+                                    }}
+                                />
+                            </InputGroup>
+                        </FormControl>
+                        <FormControl isRequired>
                             <FormLabel>账号</FormLabel>
                             <InputGroup>
                                 <InputLeftElement
@@ -166,9 +184,9 @@ const AccountModal: FC<AccountModalProps> = props => {
                         colorScheme="blue"
                         onClick={() => {
                             checkValid() &&
-                                onConfirm({
-                                    username: username || '',
-                                    password: password || '',
+                                onConfirm(name, {
+                                    username,
+                                    password,
                                 });
                         }}
                     >

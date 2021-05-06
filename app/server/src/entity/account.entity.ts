@@ -96,6 +96,10 @@ export class UpdateAccountInput {
     @Expose()
     id: string;
 
+    @Field()
+    @Expose()
+    name: string;
+
     @Field(() => GraphQLJSON)
     @Type(() => AccountEnvironment)
     @Expose()

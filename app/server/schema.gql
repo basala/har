@@ -162,6 +162,7 @@ input CreateAccountInput {
 
 input UpdateAccountInput {
   id: String!
+  name: String!
   environment: JSON!
 }
 

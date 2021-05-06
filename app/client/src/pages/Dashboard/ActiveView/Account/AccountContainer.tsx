@@ -109,7 +109,7 @@ const AccountContainer: FC = () => {
             }[];
         },
         {
-            hars: Omit<MemoizedHarResult, 'selected'>[];
+            hars: Omit<MemoizedHarResult, 'selected' | 'index'>[];
             position: string;
         }
     >(ADD_ISSUES, {
@@ -147,7 +147,7 @@ const AccountContainer: FC = () => {
 
     const [isAdding, setAdding] = React.useState(false);
     const toast = useToast();
-    const onSave = async (input: AccountParams) => {
+    const onSave = async (name: string, environment: AccountParams) => {
         if (!projectId) {
             toast({
                 description: '由于不可预期的原因导致projectId为空, 添加失败',
@@ -160,8 +160,8 @@ const AccountContainer: FC = () => {
         const response = await createAccount({
             variables: {
                 input: {
-                    environment: input,
-                    name: input.username,
+                    environment: environment,
+                    name,
                     projectId: projectId,
                 },
             },
@@ -187,7 +187,7 @@ const AccountContainer: FC = () => {
         hars,
         position,
     }: {
-        hars: Omit<MemoizedHarResult, 'selected'>[];
+        hars: Omit<MemoizedHarResult, 'selected' | 'index'>[];
         position: string;
     }) => {
         if (!projectId) {

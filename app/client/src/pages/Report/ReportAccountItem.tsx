@@ -4,6 +4,7 @@ import {
     AccordionIcon,
     AccordionItem,
     AccordionPanel,
+    Badge,
     Box,
     Icon,
     Stack,
@@ -40,9 +41,7 @@ const ReportAccountItem: FC<ReportAccountItemProps> = props => {
                                     border: '0',
                                 }}
                                 h="4rem"
-                                bg={
-                                    '#fff linear-gradient( 135deg, rgba(250, 215, 161, 0.3) 10%, rgba(233, 109, 133, 0.3) 100%);'
-                                }
+                                bg="#fff linear-gradient( 135deg, rgba(250, 215, 161, 0.3) 10%, rgba(233, 109, 133, 0.3) 100%);"
                             >
                                 <Icon
                                     as={isExpanded ? FcOpenedFolder : FcFolder}
@@ -56,6 +55,7 @@ const ReportAccountItem: FC<ReportAccountItemProps> = props => {
                                 >
                                     {name}
                                 </Box>
+                                <Badge>{}</Badge>
                                 <AccordionIcon />
                             </AccordionButton>
                             <AccordionPanel minH="4rem">

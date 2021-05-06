@@ -53,7 +53,7 @@ interface IssueUploadModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: (input: {
-        hars: Omit<MemoizedHarResult, 'selected'>[];
+        hars: Omit<MemoizedHarResult, 'selected' | 'index'>[];
         position: string;
     }) => void;
     loading: boolean;
@@ -417,7 +417,11 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                 hars: memoizedHarLists
                                     .filter(har => har.selected)
                                     .map(har => {
-                                        const { selected, ...rest } = har;
+                                        const {
+                                            selected,
+                                            index,
+                                            ...rest
+                                        } = har;
 
                                         return rest;
                                     }),
