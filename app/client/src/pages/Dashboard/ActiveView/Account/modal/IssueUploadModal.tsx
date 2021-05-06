@@ -43,6 +43,7 @@ export interface HarResult {
 }
 
 export interface MemoizedHarResult extends HarResult {
+    index: number;
     name: string;
     fields: string[];
     selected: boolean;
@@ -118,7 +119,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
     const [memoizedHarLists, setMemoizedHarLists] = React.useState<
         MemoizedHarResult[]
     >([]);
-    const [keyword, setKeyword] = React.useState(new RegExp(''));
+    const [keyword, setKeyword] = React.useState('');
     const [position, setPosition] = React.useState('');
     const [, projectId] = useUrlPath();
     const { data } = useQuery<
@@ -140,7 +141,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
 
     React.useEffect(() => {
         setMemoizedHarLists(
-            _.map(harLists, har => {
+            _.map(harLists, (har, index) => {
                 const content = JSON.parse(har.content.text);
                 const resolvable =
                     _.isPlainObject(content.data) &&
@@ -155,6 +156,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                           })
                         : ['data'],
                     selected: false,
+                    index,
                 };
             })
         );
@@ -162,7 +164,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
     React.useEffect(() => {
         setHarLists([]);
         setPosition('');
-        setKeyword(new RegExp(''));
+        setKeyword('');
     }, [props.isOpen]);
 
     const toast = useToast();
@@ -252,9 +254,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                         placeholder="搜索"
                                         onBlur={event => {
                                             setKeyword(
-                                                new RegExp(
-                                                    `/${event.target.value}`
-                                                )
+                                                `/${event.target.value}`
                                             );
                                         }}
                                     />
@@ -269,7 +269,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                         (har, index) => {
                                             return (
                                                 <IssueUploadItem
-                                                    key={index}
+                                                    key={har.index}
                                                     har={har}
                                                     onChange={selected => {
                                                         const newValue = [
