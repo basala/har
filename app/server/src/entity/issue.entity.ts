@@ -5,6 +5,29 @@ import { v4 } from 'uuid';
 import { RequestType } from './scalar';
 
 @ObjectType()
+export class RequestData {
+    @Field()
+    @Expose()
+    mimeType: string;
+
+    @Field()
+    @Type(() => Buffer)
+    @Expose()
+    text: Buffer;
+}
+
+@InputType()
+export class RequestDataInput {
+    @Field()
+    @Expose()
+    mimeType: string;
+
+    @Field()
+    @Expose()
+    text: string;
+}
+
+@ObjectType()
 @Entity({
     name: 'issues',
 })
@@ -44,14 +67,14 @@ export class IssueEntity {
     fields: string[];
 
     @Column()
-    @Type(() => Buffer)
+    @Type(() => RequestData)
     @Exclude()
-    postData: Buffer;
+    postData: RequestData;
 
     @Column()
-    @Type(() => Buffer)
+    @Type(() => RequestData)
     @Exclude()
-    content: Buffer;
+    content: RequestData;
 
     @Field()
     @Column()
@@ -73,8 +96,8 @@ export class IssueEntity {
 
     constructor(
         issue: Omit<Partial<IssueEntity>, 'content' | 'postData'> & {
-            content: string;
-            postData: string;
+            content: RequestDataInput;
+            postData: RequestDataInput;
         }
     ) {
         if (issue) {
@@ -88,8 +111,14 @@ export class IssueEntity {
             this._id = this._id || v4();
             this.createAt = this.createAt || Date.now();
             this.updateAt = this.updateAt || this.createAt;
-            this.content = Buffer.from(issue.content, 'utf-8');
-            this.postData = Buffer.from(issue.postData, 'utf-8');
+            this.content = {
+                mimeType: issue.content.mimeType,
+                text: Buffer.from(issue.content.text, 'utf-8'),
+            };
+            this.postData = {
+                mimeType: issue.postData.mimeType,
+                text: Buffer.from(issue.postData.text, 'utf-8'),
+            };
         }
     }
 }
@@ -111,11 +140,11 @@ export class CreateIssuesInput {
 
     @Field()
     @Expose()
-    content: string;
+    content: RequestDataInput;
 
     @Field()
     @Expose()
-    postData: string;
+    postData: RequestDataInput;
 
     @Field(() => [String])
     @Expose()

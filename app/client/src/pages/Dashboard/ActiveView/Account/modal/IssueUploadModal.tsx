@@ -3,6 +3,9 @@ import {
     Button,
     Center,
     HStack,
+    Input,
+    InputGroup,
+    InputLeftElement,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -21,16 +24,22 @@ import { Entry, Har } from 'har-format';
 import _ from 'lodash';
 import React, { FC } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { FcSearch } from 'react-icons/fc';
 import { useUrlPath } from '../../../../../hooks/url';
 import { QUERY_ACCOUNT } from '../../../../../query/account';
 import { AccountParams } from './AccountModal';
 import IssueUploadItem from './IssueUploadItem';
 
+export interface RequestData {
+    mimeType: string;
+    text: string;
+}
+
 export interface HarResult {
     url: string;
     method: Method;
-    content: string;
-    postData: string;
+    content: RequestData;
+    postData: RequestData;
 }
 
 export interface MemoizedHarResult extends HarResult {
@@ -84,10 +93,17 @@ function dealWithHarLists(inputs: string[]) {
                         return {
                             url: request.url,
                             method: request.method.toUpperCase() as Method,
-                            content:
-                                response.content.text || JSON.stringify(''),
-                            postData:
-                                request.postData?.text || JSON.stringify(''),
+                            content: {
+                                mimeType: response.content.mimeType,
+                                text:
+                                    response.content.text || JSON.stringify(''),
+                            },
+                            postData: {
+                                mimeType: request.postData?.mimeType || '',
+                                text:
+                                    request.postData?.text ||
+                                    JSON.stringify(''),
+                            },
                         };
                     }),
             ];
@@ -102,6 +118,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
     const [memoizedHarLists, setMemoizedHarLists] = React.useState<
         MemoizedHarResult[]
     >([]);
+    const [keyword, setKeyword] = React.useState('');
     const [position, setPosition] = React.useState('');
     const [, projectId] = useUrlPath();
     const { data } = useQuery<
@@ -120,12 +137,11 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
             input: projectId,
         },
     });
-    const [allChecked, setAllChecked] = React.useState(false);
 
     React.useEffect(() => {
         setMemoizedHarLists(
             _.map(harLists, har => {
-                const content = JSON.parse(har.content);
+                const content = JSON.parse(har.content.text);
                 const resolvable =
                     _.isPlainObject(content.data) &&
                     _.keys(content.data).length > 0;
@@ -142,11 +158,11 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                 };
             })
         );
-        setAllChecked(false);
     }, [harLists]);
     React.useEffect(() => {
         setHarLists([]);
         setPosition('');
+        setKeyword('');
     }, [props.isOpen]);
 
     const toast = useToast();
@@ -224,80 +240,117 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                     : '重新上传...'}
                             </Text>
                         </Center>
-                        {_.size(harLists) > 0 ? (
+                        {_.size(memoizedHarLists) > 0 ? (
                             <Stack borderWidth={2} borderRadius={8} p={2}>
+                                <InputGroup>
+                                    <InputLeftElement
+                                        pointerEvents="none"
+                                        children={<FcSearch />}
+                                    />
+                                    <Input
+                                        type="text"
+                                        placeholder="搜索"
+                                        onBlur={event => {
+                                            setKeyword(event.target.value);
+                                        }}
+                                    />
+                                </InputGroup>
                                 <Stack overflow="auto" maxH="25rem" spacing={4}>
-                                    {_.map(harLists, (har, index) => {
-                                        return (
-                                            <IssueUploadItem
-                                                key={index}
-                                                har={har}
-                                                checked={allChecked}
-                                                onChange={selected => {
-                                                    const newValue = [
-                                                        ...memoizedHarLists,
-                                                    ];
-                                                    newValue[
-                                                        index
-                                                    ].selected = selected;
-                                                    setMemoizedHarLists(
-                                                        newValue
-                                                    );
-                                                }}
-                                                onNameChange={name => {
-                                                    const newValue = [
-                                                        ...memoizedHarLists,
-                                                    ];
-                                                    newValue[index].name = name;
-                                                    setMemoizedHarLists(
-                                                        newValue
-                                                    );
-                                                }}
-                                                onFieldChange={(
-                                                    fields: string[]
-                                                ) => {
-                                                    const newValue = [
-                                                        ...memoizedHarLists,
-                                                    ];
-                                                    newValue[
-                                                        index
-                                                    ].fields = fields;
-                                                    setMemoizedHarLists(
-                                                        newValue
-                                                    );
-                                                }}
-                                            />
-                                        );
-                                    })}
+                                    {_.map(
+                                        _.isEmpty(keyword)
+                                            ? memoizedHarLists
+                                            : memoizedHarLists.filter(har => {
+                                                  return har.url.match(keyword);
+                                              }),
+                                        (har, index) => {
+                                            return (
+                                                <IssueUploadItem
+                                                    key={index}
+                                                    har={har}
+                                                    onChange={selected => {
+                                                        const newValue = [
+                                                            ...memoizedHarLists,
+                                                        ];
+                                                        newValue[
+                                                            index
+                                                        ].selected = selected;
+                                                        setMemoizedHarLists(
+                                                            newValue
+                                                        );
+                                                    }}
+                                                    onNameChange={name => {
+                                                        const newValue = [
+                                                            ...memoizedHarLists,
+                                                        ];
+                                                        newValue[
+                                                            index
+                                                        ].name = name;
+                                                        setMemoizedHarLists(
+                                                            newValue
+                                                        );
+                                                    }}
+                                                    onFieldChange={(
+                                                        fields: string[]
+                                                    ) => {
+                                                        const newValue = [
+                                                            ...memoizedHarLists,
+                                                        ];
+                                                        newValue[
+                                                            index
+                                                        ].fields = fields;
+                                                        setMemoizedHarLists(
+                                                            newValue
+                                                        );
+                                                    }}
+                                                />
+                                            );
+                                        }
+                                    )}
                                 </Stack>
                                 <HStack spacing={2}>
                                     <Button
                                         colorScheme="blue"
                                         onClick={() => {
-                                            setAllChecked(true);
-                                            setMemoizedHarLists(
-                                                memoizedHarLists.map(har => {
+                                            const newValue = memoizedHarLists.map(
+                                                har => {
                                                     return {
                                                         ...har,
-                                                        selected: true,
+                                                        selected:
+                                                            _.isEmpty(
+                                                                keyword
+                                                            ) ||
+                                                            har.url.match(
+                                                                keyword
+                                                            )
+                                                                ? true
+                                                                : har.selected,
                                                     };
-                                                })
+                                                }
                                             );
+                                            setMemoizedHarLists(newValue);
                                         }}
                                     >
                                         全选
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            setAllChecked(false);
-                                            setMemoizedHarLists(
-                                                memoizedHarLists.map(har => {
+                                            const newValue = memoizedHarLists.map(
+                                                har => {
                                                     return {
                                                         ...har,
-                                                        selected: false,
+                                                        selected:
+                                                            _.isEmpty(
+                                                                keyword
+                                                            ) ||
+                                                            har.url.match(
+                                                                keyword
+                                                            )
+                                                                ? false
+                                                                : har.selected,
                                                     };
-                                                })
+                                                }
                                             );
+                                            setMemoizedHarLists(newValue);
                                         }}
                                     >
                                         反选
@@ -308,7 +361,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                         ) : (
                             <></>
                         )}
-                        {_.size(harLists) > 0 ? (
+                        {_.size(memoizedHarLists) > 0 ? (
                             <HStack spacing={4}>
                                 <Text fontSize={14} fontWeight="bold">
                                     保存账号:

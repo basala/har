@@ -169,9 +169,14 @@ input CreateIssuesInput {
   name: String!
   url: String!
   method: RequestType!
-  content: String!
-  postData: String!
+  content: RequestDataInput!
+  postData: RequestDataInput!
   fields: [String!]!
+}
+
+input RequestDataInput {
+  mimeType: String!
+  text: String!
 }
 
 input UpdateIssueInput {
