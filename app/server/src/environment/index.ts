@@ -1,8 +1,6 @@
 import { config } from 'dotenv';
 
-config({
-    path: process.env.DOTENV_CONFIG_PATH || '.env',
-});
+config();
 
 // mongodb
 const MONGO_HOST = process.env.MONGO_HOST || '';
