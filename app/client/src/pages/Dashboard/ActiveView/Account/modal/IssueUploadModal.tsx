@@ -118,7 +118,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
     const [memoizedHarLists, setMemoizedHarLists] = React.useState<
         MemoizedHarResult[]
     >([]);
-    const [keyword, setKeyword] = React.useState('');
+    const [keyword, setKeyword] = React.useState(new RegExp(''));
     const [position, setPosition] = React.useState('');
     const [, projectId] = useUrlPath();
     const { data } = useQuery<
@@ -162,7 +162,7 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
     React.useEffect(() => {
         setHarLists([]);
         setPosition('');
-        setKeyword('');
+        setKeyword(new RegExp(''));
     }, [props.isOpen]);
 
     const toast = useToast();
@@ -251,7 +251,11 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                         type="text"
                                         placeholder="搜索"
                                         onBlur={event => {
-                                            setKeyword(event.target.value);
+                                            setKeyword(
+                                                new RegExp(
+                                                    `/${event.target.value}`
+                                                )
+                                            );
                                         }}
                                     />
                                 </InputGroup>
