@@ -78,7 +78,7 @@ export class AccountResolver {
 
             const value = {
                 environment: input.environment,
-                name: input.environment.username,
+                name: input.name,
                 updateAt: Date.now(),
             };
             await getMongoRepository(AccountEntity).update(

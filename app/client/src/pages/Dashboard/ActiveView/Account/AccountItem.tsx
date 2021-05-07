@@ -12,6 +12,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
+    Badge,
     Box,
     Button,
     ButtonGroup,
@@ -92,6 +93,7 @@ const AccountItem: FC<AccountItemProps> = props => {
         {
             input: {
                 id: string;
+                name: string;
                 environment: AccountParams;
             };
         }
@@ -134,15 +136,21 @@ const AccountItem: FC<AccountItemProps> = props => {
     });
 
     const toast = useToast();
-    const onUpdate = async (input: AccountParams) => {
-        if (_.isEqual(_.pick(environment, _.keys(input)), input)) {
+    const onUpdate = async (name: string, environment: AccountParams) => {
+        if (
+            _.isEqual(
+                _.pick(props.environment, _.keys(environment)),
+                environment
+            )
+        ) {
             onClose();
         } else {
             const response = await updateAccount({
                 variables: {
                     input: {
                         id,
-                        environment: input,
+                        name,
+                        environment: environment,
                     },
                 },
             }).catch(errors => {
@@ -261,10 +269,12 @@ const AccountItem: FC<AccountItemProps> = props => {
                                 >
                                     {props.name}
                                 </Box>
+                                <Badge>{props.environment.username}</Badge>
                                 <ButtonGroup
                                     onClick={event => {
                                         event.preventDefault();
                                     }}
+                                    ml="1rem"
                                     mr="1rem"
                                 >
                                     {createActionButton(
@@ -289,7 +299,8 @@ const AccountItem: FC<AccountItemProps> = props => {
                                         loading={updateLoading}
                                         onClose={onClose}
                                         onConfirm={onUpdate}
-                                        value={environment}
+                                        name={name}
+                                        environment={environment}
                                     />
                                     <AlertDialog
                                         leastDestructiveRef={cancelRef}

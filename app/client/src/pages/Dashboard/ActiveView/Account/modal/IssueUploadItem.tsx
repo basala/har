@@ -20,25 +20,19 @@ import {
 import _ from 'lodash';
 import React, { FC } from 'react';
 import { FcVideoFile } from 'react-icons/fc';
-import { HarResult } from './IssueUploadModal';
+import { MemoizedHarResult } from './IssueUploadModal';
 
 interface IssueUploadItemProps {
-    har: HarResult;
-    checked: boolean;
+    har: MemoizedHarResult;
     onChange: (selected: boolean) => void;
     onNameChange: (name: string) => void;
     onFieldChange: (value: string[]) => void;
 }
 
 const IssueUploadItem: FC<IssueUploadItemProps> = props => {
-    const { har, checked } = props;
-    const [isChecked, setChecked] = React.useState(checked);
+    const { har } = props;
 
-    React.useEffect(() => {
-        setChecked(checked);
-    }, [checked]);
-
-    const content = JSON.parse(har.content);
+    const content = JSON.parse(har.content.text);
     const resolvable =
         _.isPlainObject(content.data) && _.keys(content.data).length > 0;
 
@@ -52,9 +46,8 @@ const IssueUploadItem: FC<IssueUploadItemProps> = props => {
         >
             <HStack>
                 <Checkbox
-                    isChecked={isChecked}
+                    isChecked={har.selected}
                     onChange={event => {
-                        setChecked(event.target.checked);
                         props.onChange(event.target.checked);
                     }}
                 />
@@ -62,6 +55,7 @@ const IssueUploadItem: FC<IssueUploadItemProps> = props => {
                 <Badge colorScheme="pink">{har.method}</Badge>
                 <Editable
                     defaultValue={har.url}
+                    title={har.url}
                     w="1rem"
                     flex="1"
                     onSubmit={props.onNameChange}

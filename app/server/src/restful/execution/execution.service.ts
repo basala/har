@@ -296,14 +296,14 @@ export class ExecutionService {
                 url: pathname + search,
                 baseURL: projectEnv.host,
                 method: issue.method,
-                data: JSON.parse(issue.postData.toString()),
+                data: JSON.parse(issue.postData.text.toString()),
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             }).catch((error: Error) => {
                 throw new Error(error.message);
             });
-            const content = JSON.parse(issue.content.toString());
+            const content = JSON.parse(issue.content.text.toString());
             const refer = pick(content, issue.fields);
             const actual = pick(response.data, issue.fields);
 

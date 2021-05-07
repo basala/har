@@ -188,7 +188,7 @@ const Login: FC = () => {
     return (
         <Center w="100vw" h="100vh">
             <Stack
-                w="20vw"
+                w="30vw"
                 borderWidth={1}
                 borderRadius={4}
                 boxShadow="lg"

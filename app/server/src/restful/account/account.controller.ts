@@ -1,7 +1,6 @@
 import { RestAuthGuard } from '@auth';
 import { ProjectEntity } from '@entity';
 import {
-    BadRequestException,
     Body,
     Controller,
     ForbiddenException,
@@ -11,6 +10,7 @@ import {
     ValidationPipe,
 } from '@nestjs/common';
 import { generateToken } from '@utils';
+import { isEmpty } from 'lodash';
 import { getMongoRepository } from 'typeorm';
 import { TestConnectionDto } from './account.dto';
 
@@ -36,15 +36,13 @@ export class AccountController {
             throw new ForbiddenException('project does not exist');
         }
 
-        await generateToken(projectEnv.environment, {
+        const token = await generateToken(projectEnv.environment, {
             username,
             password,
-        }).catch((error: Error) => {
-            throw new BadRequestException(error.message);
         });
 
         return {
-            valid: true,
+            valid: isEmpty(token.error),
         };
     }
 }
