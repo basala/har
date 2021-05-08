@@ -14,12 +14,7 @@ export class RobotService {
             throw new ForbiddenException('robot does not exist');
         }
 
-        return this.sendMsg(
-            robot.webhook,
-            robot.mentioned_list,
-            msg,
-            'markdown'
-        );
+        return this.sendMsg(robot.webhook, robot.mentioned_list, msg, type);
     }
 
     async sendMsg(
