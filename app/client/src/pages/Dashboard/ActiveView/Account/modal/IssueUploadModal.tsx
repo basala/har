@@ -272,23 +272,37 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                                     key={har.index}
                                                     har={har}
                                                     onChange={selected => {
-                                                        const newValue = [
-                                                            ...memoizedHarLists,
-                                                        ];
-                                                        newValue[
-                                                            index
-                                                        ].selected = selected;
+                                                        const newValue = memoizedHarLists.map(
+                                                            pre => {
+                                                                return {
+                                                                    ...pre,
+                                                                    selected:
+                                                                        pre.index ===
+                                                                        har.index
+                                                                            ? selected
+                                                                            : pre.selected,
+                                                                };
+                                                            }
+                                                        );
+
                                                         setMemoizedHarLists(
                                                             newValue
                                                         );
                                                     }}
                                                     onNameChange={name => {
-                                                        const newValue = [
-                                                            ...memoizedHarLists,
-                                                        ];
-                                                        newValue[
-                                                            index
-                                                        ].name = name;
+                                                        const newValue = memoizedHarLists.map(
+                                                            pre => {
+                                                                return {
+                                                                    ...pre,
+                                                                    name:
+                                                                        pre.index ===
+                                                                        har.index
+                                                                            ? name
+                                                                            : pre.name,
+                                                                };
+                                                            }
+                                                        );
+
                                                         setMemoizedHarLists(
                                                             newValue
                                                         );
@@ -296,12 +310,19 @@ const IssueUploadModal: FC<IssueUploadModalProps> = props => {
                                                     onFieldChange={(
                                                         fields: string[]
                                                     ) => {
-                                                        const newValue = [
-                                                            ...memoizedHarLists,
-                                                        ];
-                                                        newValue[
-                                                            index
-                                                        ].fields = fields;
+                                                        const newValue = memoizedHarLists.map(
+                                                            pre => {
+                                                                return {
+                                                                    ...pre,
+                                                                    fields:
+                                                                        pre.index ===
+                                                                        har.index
+                                                                            ? fields
+                                                                            : pre.fields,
+                                                                };
+                                                            }
+                                                        );
+
                                                         setMemoizedHarLists(
                                                             newValue
                                                         );
