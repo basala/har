@@ -27,7 +27,9 @@ export class ReportResolver {
         @CurrentUser() user: UserEntity
     ): Promise<FormatReport[]> {
         const reports = await getMongoRepository(ReportEntity).find({
-            userId: user.id,
+            where: {
+                userId: user.id,
+            },
             order: {
                 updateAt: 'DESC',
             },
@@ -66,7 +68,9 @@ export class ReportResolver {
         @CurrentUser() user: UserEntity
     ): Promise<ReportEntity[]> {
         const reports = await getMongoRepository(ReportEntity).find({
-            userId: user.id,
+            where: {
+                userId: user.id,
+            },
         });
 
         if (isEmpty(reports)) {
