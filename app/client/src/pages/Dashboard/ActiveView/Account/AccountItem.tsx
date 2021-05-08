@@ -141,7 +141,8 @@ const AccountItem: FC<AccountItemProps> = props => {
             _.isEqual(
                 _.pick(props.environment, _.keys(environment)),
                 environment
-            )
+            ) &&
+            name === props.name
         ) {
             onClose();
         } else {
