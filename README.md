@@ -116,4 +116,4 @@ And then restart your containers.
 
 ## More Support
 
-Any other questions please use [Google](https://www.google.com) or contact Kira or Okami-fay😎😎😎😎😎.
+Any other questions please use [Google](https://www.google.com) or contact me😎😎😎😎😎.
